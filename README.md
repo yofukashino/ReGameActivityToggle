@@ -1,20 +1,20 @@
-### PremiumScreenShare
+### BetterGameActivityToggle
 
-Stream in **_SUPREME_** quality and **_ULTRA HIGH_** FPS.
+A game activity toggle option in either the status picker or the user panel.
 
-The maximum capability is 2160p with 360 FPS.
+The position of the button can be configured in the plugin settings.
 
-This plugin is compatible with plugins like HideDisabledEmojis or Freemoji.
+Raw Link:
+[BetterGameActivityToggle.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/BetterGameActivityToggle.plugin.js)
 
-Direct Download Link:
-[Tharki.PremiumScreenShare.asar](https://github.com/Tharki-God/PremiumScreenShare/releases/latest/download/Tharki.PremiumScreenShare.asar)
+[Tharki.ReGameActivityToggle.asar](https://github.com/Tharki-God/ReGameActivityToggle/releases/latest/download/Tharki.ReGameActivityToggle.asar)
 
 Install Link:
-[![Install in Replugged](https://img.shields.io/badge/-Install%20in%20Replugged-blue?style=for-the-badge&logo=none)](https://replugged.dev/install?identifier=Tharki-God/PremiumScreenShare&source=github)
+[![Install in Replugged](https://img.shields.io/badge/-Install%20in%20Replugged-blue?style=for-the-badge&logo=none)](https://replugged.dev/install?identifier=Tharki-God/ReGameActivityToggle&source=github)
 
-![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/premiumscreenshare.png)
+![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/togglegame.png)
 
-<sub>Inspired by a Powercord plugin made by
-[eternal](https://github.com/discord-modifications/screenshare-crack).</sub>
+<sub>Inspired by a BetterDiscord plugin made by
+[Mirco Wittrien](https://github.com/mwittrien/BetterDiscordAddons/tree/master/Plugins/GameActivityToggle).</sub>
 
 > For Contributing: [Make a pr thats all.]
