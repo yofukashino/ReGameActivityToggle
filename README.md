@@ -4,9 +4,7 @@ A game activity toggle option in either the status picker or the user panel.
 
 The position of the button can be configured in the plugin settings.
 
-Raw Link:
-[BetterGameActivityToggle.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/BetterGameActivityToggle.plugin.js)
-
+Download Link:
 [Tharki.ReGameActivityToggle.asar](https://github.com/Tharki-God/ReGameActivityToggle/releases/latest/download/Tharki.ReGameActivityToggle.asar)
 
 Install Link:
