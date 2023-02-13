@@ -1,37 +1,43 @@
-/* eslint-disable eqeqeq */
-import { common, Injector, Logger, settings } from "replugged";
+/* eslint-disable new-cap */
+import { Injector, Logger, common, components, settings, webpack } from "replugged";
 import { Sounds, defaultSettings } from "./lib/consts.jsx";
 import * as Utils from "./lib/utils.jsx";
 import "./style.css";
 import {
-  WindowInfoStore,
-  KeybindUtils,
   AccountDetails,
-  PanelButton,
+  KeybindUtils,
   Menu,
-  StatusPicker,
-  SoundModule,
+  PanelButton,
+  SoundUtils,
+  StatusPickerClasses,
+  WindowInfoStore,
 } from "./lib/requiredModules.jsx";
 import { registerSettings } from "./Components/Settings.jsx";
 import * as UserSettingStore from "./lib/UserSettingStore.jsx";
 import * as Icons from "./Components/Icons.jsx";
 const { toast: Toasts } = common;
+const { ContextMenu } = components;
 export const PluginInjector = new Injector();
 export const PluginLogger = Logger.plugin("ReGameActivityToggle");
 export const SettingValues = await settings.init("Tharki.ReGameActivityToggle", defaultSettings);
 const currentlyPressed = {};
 const toggleGameActivity = (enabled) => {
   if (SettingValues.get("playAudio", defaultSettings.playAudio))
-    SoundModule.GN(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
+    SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
 };
 const patchPanelButton = () => {
-  PluginInjector.before(AccountDetails, "Z", (args) => {
-    if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return;
-    const [{ children }] = args;
-    if (!children?.some?.((m) => m?.props?.tooltipText?.toLowerCase().includes("mute"))) return;
+  PluginInjector.after(AccountDetails.prototype, "render", (args, res) => {
+    if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return res;
+    const {
+      props: { children },
+    } = Utils.findInReactTree(res, (m) =>
+      Utils.hasProps(m?.props, ["basis", "children", "grow", "shrink"]),
+    );
+
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
     const Icon = Icons.Controller("20", "20");
+
     const DisabledIcon = Utils.addChilds(
       Icon,
       <polygon
@@ -58,7 +64,8 @@ const patchPanelButton = () => {
   });
 };
 const patchStatusPicker = () => {
-  PluginInjector.before(Menu, "ZP", (args) => {
+  const patchFunctionKey = webpack.getFunctionKeyBySource(Menu, ".navId");
+  PluginInjector.before(Menu, patchFunctionKey, (args) => {
     if (
       !SettingValues.get("statusPicker", defaultSettings.statusPicker) ||
       args[0]?.navId != "account"
@@ -86,7 +93,7 @@ const patchStatusPicker = () => {
       children.splice(
         children.indexOf(switchAccount),
         0,
-        <Menu.kS
+        <ContextMenu.MenuGroup
           {...{
             className: "tharki",
             children: [],
@@ -96,7 +103,7 @@ const patchStatusPicker = () => {
     const section = children.find((c) => c?.props?.className == "tharki");
     if (!section.props.children.find((m) => m?.props?.id == "game-activity"))
       section.props.children.push(
-        <Menu.sN
+        <ContextMenu.MenuItem
           {...{
             id: "game-activity",
             keepItemStyles: true,
@@ -106,17 +113,17 @@ const patchStatusPicker = () => {
             render: () => (
               <div
                 {...{
-                  className: StatusPicker.statusItem,
+                  className: StatusPickerClasses.statusItem,
                   "aria-label": `${enabled ? "Hide" : "Show"} Game Activity`,
                 }}>
                 {enabled ? DisabledIcon : Icon}
                 <div
                   {...{
-                    className: StatusPicker.status,
+                    className: StatusPickerClasses.status,
                   }}>{`${enabled ? "Hide" : "Show"} Game Activity`}</div>
                 <div
                   {...{
-                    className: StatusPicker.description,
+                    className: StatusPickerClasses.description,
                   }}>{`${
                   enabled ? "Disable" : "Enable"
                 } displaying currently running game in your activity status.`}</div>
@@ -132,7 +139,7 @@ const applyInjections = () => {
   patchPanelButton();
 };
 const keybindListener = (e) => {
-  const keybindEvent = KeybindUtils.d2(SettingValues.get("keybind", defaultSettings.keybind));
+  const keybindEvent = KeybindUtils.toEvent(SettingValues.get("keybind", defaultSettings.keybind));
   if (
     e.type == "keyup" &&
     keybindEvent.length &&
@@ -140,7 +147,7 @@ const keybindListener = (e) => {
       (ev) =>
         Object.keys(ev)
           .filter((k) => k !== "keyCode")
-          .every((k) => ev[k] == e[k]) && currentlyPressed[ev["keyCode"]],
+          .every((k) => ev[k] == e[k]) && currentlyPressed[ev.keyCode],
     )
   ) {
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");

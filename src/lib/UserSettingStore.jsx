@@ -1,4 +1,8 @@
-import { UserSettingsProtoStore, UserSettingsProtoUtils } from "./requiredModules.jsx";
+import {
+  UserSettingsActionTypes,
+  UserSettingsProtoStore,
+  UserSettingsProtoUtils,
+} from "./requiredModules.jsx";
 import * as Utils from "./utils.jsx";
 export const getSetting = (category, key) => {
   if (!category || !key) return;
@@ -21,6 +25,6 @@ export const setSetting = (category, key, value) => {
         if (Utils.isObject(value)) for (const k in value) settings[key][k] = value[k];
         else settings[key].value = value;
       },
-      UserSettingsProtoUtils.fy.INFREQUENT_USER_ACTION,
+      UserSettingsActionTypes.INFREQUENT_USER_ACTION,
     );
 };

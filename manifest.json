@@ -14,5 +14,6 @@
   },
   "license": "MIT",
   "type": "replugged-plugin",
-  "renderer": "src/index.jsx"
+  "renderer": "src/index.jsx",
+  "plaintextPatches": "src/plaintextPatches.jsx"
 }

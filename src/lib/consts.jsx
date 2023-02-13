@@ -4,7 +4,7 @@ export const defaultSettings = {
   userPanel: true,
   playAudio: true,
   showToast: true,
-  keybind: KeybindUtils.Kd("ctrl+shift+g"),
+  keybind: KeybindUtils.toCombo("ctrl+shift+g"),
 };
 export const Sounds = {
   Enable: "ptt_start",

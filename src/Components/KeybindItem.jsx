@@ -1,5 +1,5 @@
 import { common, components } from "replugged";
-import { Keybind } from "../lib/requiredModules.jsx";
+import { KeybindRecorder } from "../lib/requiredModules.jsx";
 const { React } = common;
 const { FormItem } = components;
 class CloseButton extends React.Component {
@@ -21,7 +21,7 @@ class CloseButton extends React.Component {
   }
 }
 
-export class KeybindItem extends React.Component {
+export class KeybindRecorderItem extends React.Component {
   constructor(props) {
     super(props);
     // eslint-disable-next-line no-undefined
@@ -57,7 +57,7 @@ export class KeybindItem extends React.Component {
                 flexGrow: 1,
               },
             }}>
-            <Keybind
+            <KeybindRecorder
               {...{
                 disabled: this.props.disabled,
                 defaultValue: this.state.value,

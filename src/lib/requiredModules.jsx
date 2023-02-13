@@ -1,18 +1,34 @@
 import { webpack } from "replugged";
+import * as Utils from "./utils.jsx";
 export const WindowInfoStore = webpack.getByProps("isFocused", "isElementFullScreen");
 
-export const KeybindUtils = webpack.getModule((m) =>
-  m?.exports?.Kd?.toString().includes("numpad plus"),
-);
+export const KeybindUtils = {
+  module: webpack.getBySource("numpad plus"),
+  get toCombo() {
+    return webpack.getFunctionBySource(this.module, "numpad plus");
+  },
+  get toEvent() {
+    return webpack.getFunctionBySource(this.module, /(?=.*keyCode)(?=.*BROWSER)/);
+  },
+};
 
-export const SoundModule = webpack.getModule((m) =>
-  m?.exports?.GN?.toString().includes("getSoundpack"),
-);
+export const SoundUtils = {
+  module: webpack.getBySource(/function.*\.disableSounds.*\.getSoundpack\(\).*play\(\).*return/),
+  get createSound() {
+    return webpack.getFunctionBySource(this.module, "return new");
+  },
+  get createSoundpackSound() {
+    return webpack.getFunctionBySource(this.module, ");return");
+  },
+  get playSound() {
+    return webpack.getFunctionBySource(this.module, "getSoundpack");
+  },
+};
 
-export const StatusPicker = webpack.getByProps("status", "statusItem");
+export const StatusPickerClasses = webpack.getByProps("status", "statusItem");
 
-export const Menu = webpack.getModule(
-  (m) => m?.exports?.ZP?.toString().includes("navId") && m?.exports?.sN,
+export const Menu = webpack.getBySource(
+  "Menu API only allows Items and groups of Items as children",
 );
 
 export const UserSettingsProtoStore = webpack.getByProps(
@@ -20,14 +36,16 @@ export const UserSettingsProtoStore = webpack.getByProps(
   "getGuildRecentsDismissedAt",
 );
 
-export const UserSettingsProtoUtils = webpack.getModule((m) => m?.exports?.hW?.ProtoClass);
+export const UserSettingsProtoUtils = webpack.getBySource("UserSettingsProtoLastWriteTimes");
+export const UserSettingsActionTypes = webpack.getExportsForProps(UserSettingsProtoUtils, [
+  "SLOW_USER_ACTION",
+  "DAILY",
+]);
 
-export const PanelButton = webpack.getModule((m) =>
-  m?.exports?.Z?.toString?.()?.includes("Masks.PANEL_BUTTON"),
-);
-export const { exports: AccountDetails } = webpack.getModule(
-  (m) => [".START", "shrink", "grow", "basis"].every((s) => m?.exports?.Z?.toString()?.includes(s)),
-  { raw: true },
-);
+export const PanelButton = webpack.getBySource("Masks.PANEL_BUTTON");
 
-export const Keybind = webpack.getModule((m) => m?.exports?.Z?.prototype?.handleComboChange);
+export const { AccountDetails } = webpack.getBySource("account panel v2");
+
+export const KeybindRecorder = webpack.getModule((m) =>
+  Utils.prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
+);

@@ -3,7 +3,7 @@ import { PluginLogger, SettingValues } from "../index.jsx";
 const { React } = common;
 import { defaultSettings } from "../lib/consts.jsx";
 const { SwitchItem, Category } = components;
-import { KeybindItem } from "./KeybindItem.jsxjsx";
+import { KeybindRecorderItem } from "./KeybindItem.jsx";
 export const registerSettings = () => {
   for (const [key, value] of Object.entries(defaultSettings)) {
     if (SettingValues.has(key)) return;
@@ -20,7 +20,7 @@ export const Settings = () => {
           note: "Ways to toggle game activity status on current user.",
           open: true,
         }}>
-        <KeybindItem
+        <KeybindRecorderItem
           {...{
             title: "Toggle by keybind:",
             note: "Keybind to toggle showing game activity.",
