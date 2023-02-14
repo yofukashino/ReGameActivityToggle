@@ -29,15 +29,13 @@ const toggleGameActivity = (enabled: Boolean) => {
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
 };
 const patchPanelButton = () => {
-  console.log("0");
-  PluginInjector.after(AccountDetails.prototype, "render", (args, res) => {
+  PluginInjector.after(AccountDetails.AccountDetails.prototype, "render", (args, res) => {
     if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return res;
     const {
       props: { children },
     } = Utils.findInReactTree(res, (m) =>
       Utils.hasProps(m?.props, ["basis", "children", "grow", "shrink"]),
     );
-    console.log("3");
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
     const Icon = Icons.Controller("20", "20");
 

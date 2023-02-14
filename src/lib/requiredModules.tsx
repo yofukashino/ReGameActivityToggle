@@ -1,4 +1,4 @@
-import { webpack } from "replugged";
+import { types, webpack } from "replugged";
 import * as Utils from "./utils";
 interface windowinfocommands {
   isFocused: () => boolean;
@@ -40,7 +40,7 @@ export const StatusPickerClasses = webpack.getByProps("status", "statusItem");
 
 export const Menu = webpack.getBySource(
   "Menu API only allows Items and groups of Items as children",
-) as any;
+) as any; //change it later
 
 export const UserSettingsProtoStore = webpack.getByProps(
   "getGuildFolders",
@@ -55,10 +55,14 @@ export const UserSettingsActionTypes = webpack.getExportsForProps(UserSettingsPr
 
 export const PanelButton = webpack.getBySource("Masks.PANEL_BUTTON");
 
-export const AccountDetails = webpack.getFunctionBySource(
-  webpack.getBySource("NO_WRAP") as any,
-  "return",
-);
+interface prototypemodule {
+  render: types.AnyFunction;
+}
+
+export const AccountDetails = webpack.getBySource<{
+  prototype: prototypemodule;
+  AccountDetails: types.AnyFunction;
+}>("account panel v2");
 
 export const KeybindRecorder = webpack.getModule((m) =>
   Utils.prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
