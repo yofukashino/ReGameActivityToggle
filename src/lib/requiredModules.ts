@@ -40,7 +40,7 @@ export const StatusPickerClasses = webpack.getByProps("status", "statusItem");
 
 export const Menu = webpack.getBySource(
   "Menu API only allows Items and groups of Items as children",
-) as any; //change it later
+);
 
 export const UserSettingsProtoStore = webpack.getByProps(
   "getGuildFolders",
@@ -55,12 +55,7 @@ export const UserSettingsActionTypes = webpack.getExportsForProps(UserSettingsPr
 
 export const PanelButton = webpack.getBySource("Masks.PANEL_BUTTON");
 
-interface prototypemodule {
-  render: types.AnyFunction;
-}
-
-export const AccountDetails = webpack.getBySource<{
-  prototype: prototypemodule;
+export const { AccountDetails } = webpack.getBySource<{
   AccountDetails: types.AnyFunction;
 }>("account panel v2");
 

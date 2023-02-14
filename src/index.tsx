@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable consistent-return */
 /* eslint-disable new-cap */
-import { Injector, Logger, common, components, settings, webpack } from "replugged";
+import { Injector, Logger, common, components, settings, types, webpack } from "replugged";
 import { Sounds, defaultSettings } from "./lib/consts.jsx";
 import * as Utils from "./lib/utils.jsx";
 import "./style.css";
@@ -29,7 +29,7 @@ const toggleGameActivity = (enabled: Boolean) => {
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
 };
 const patchPanelButton = () => {
-  PluginInjector.after(AccountDetails.AccountDetails.prototype, "render", (args, res) => {
+  PluginInjector.after(AccountDetails.prototype, "render", (args, res) => {
     if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return res;
     const {
       props: { children },
@@ -69,9 +69,11 @@ interface navid {
   navId: string;
 }
 const patchStatusPicker = () => {
-  const patchFunctionKey = webpack.getFunctionKeyBySource(Menu, ".navId") as string;
+  const patchFunctionKey = webpack.getFunctionKeyBySource(
+    Menu as types.ObjectExports, //shut up vscode
+    ".navId",
+  ) as never;
   PluginInjector.before(Menu, patchFunctionKey, (args) => {
-    console.log(args);
     if (
       !SettingValues.get("statusPicker", defaultSettings.statusPicker) ||
       (args[0] as navid).navId != "account"
@@ -147,7 +149,7 @@ const applyInjections = () => {
 };
 interface keybindlistnertypes {
   length: number;
-  every: any;
+  every: types.AnyFunction;
 }
 const keybindListener = (e) => {
   const keybindEvent = KeybindUtils.toEvent(
