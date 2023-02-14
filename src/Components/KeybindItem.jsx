@@ -1,5 +1,5 @@
 import { common, components } from "replugged";
-import { KeybindRecorder } from "../lib/requiredModules.jsx";
+import { KeybindRecorder } from "../lib/requiredModules";
 const { React } = common;
 const { FormItem } = components;
 class CloseButton extends React.Component {

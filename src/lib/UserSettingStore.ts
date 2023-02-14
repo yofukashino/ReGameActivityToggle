@@ -2,8 +2,8 @@ import {
   UserSettingsActionTypes,
   UserSettingsProtoStore,
   UserSettingsProtoUtils,
-} from "./requiredModules.jsx";
-import * as Utils from "./utils.jsx";
+} from "./requiredModules";
+import * as Utils from "./utils";
 export const getSetting = (category, key) => {
   if (!category || !key) return;
   return UserSettingsProtoStore?.settings?.[category]?.[key]?.value;

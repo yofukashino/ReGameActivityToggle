@@ -1,4 +1,4 @@
-import { KeybindUtils } from "./requiredModules.jsx";
+import { KeybindUtils } from "./requiredModules";
 export const defaultSettings = {
   statusPicker: true,
   userPanel: true,
