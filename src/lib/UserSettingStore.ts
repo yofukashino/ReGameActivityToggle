@@ -4,16 +4,19 @@ import {
   UserSettingsProtoUtils,
 } from "./requiredModules";
 import * as Utils from "./utils";
-export const getSetting = (category, key) => {
+export const getSetting = (category, key): boolean => {
   if (!category || !key) return;
   return UserSettingsProtoStore?.settings?.[category]?.[key]?.value;
 };
-export const getSettingsStore = () => {
+export const getSettingsStore = (): {
+  updateAsync: (arg0: unknown, arg1: unknown, arg2: unknown) => void;
+} => {
+  //i legit don't know what this doing
   return (Object.entries(UserSettingsProtoUtils)?.find?.(
     (n) => n?.[1]?.updateAsync && n?.[1]?.ProtoClass?.typeName?.endsWith(".PreloadedUserSettings"),
   ) || [])[1];
 };
-export const setSetting = (category, key, value) => {
+export const setSetting = (category, key, value): boolean => {
   if (!category || !key) return;
   let store = getSettingsStore();
   if (store)
