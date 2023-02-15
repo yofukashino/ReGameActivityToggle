@@ -1,8 +1,8 @@
-### BetterGameActivityToggle
+### RerGameActivityToggle
 
-A game activity toggle option in either the status picker or the user panel.
+A game activity toggle option in either the status picker or the user panel or by keybind.
 
-The position of the button can be configured in the plugin settings.
+The toggle options can be configured in the plugin settings.
 
 Download Link:
 
