@@ -57,26 +57,33 @@ export interface AccountDetailsClasses {
   withTagAsButton: string;
   withTagless: string;
 }
+export interface Settings {
+  statusPicker: boolean;
+  userPanel: boolean;
+  playAudio: boolean;
+  showToast: boolean;
+  keybind: unknown[];
+}
 export class CloseButton extends React.Component {
-  protected props: {
+  public props: {
     size?: string;
     className?: string;
     onClick?: () => void;
   };
 }
 export class KeybindRecorderItem extends React.Component {
-  protected props: {
+  public props: {
     title?: string;
     note?: string;
     size?: string;
     className?: string;
-    value?: boolean;
+    value?: unknown;
     onClick?: () => void;
     onChange?: (arg0: unknown) => void;
     disabled?: boolean;
     clearable?: boolean;
   };
-  protected state: {
+  public state: {
     value: boolean;
   };
 }

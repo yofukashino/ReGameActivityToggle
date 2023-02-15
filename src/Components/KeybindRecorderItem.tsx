@@ -1,9 +1,11 @@
 /* eslint-disable eqeqeq */
 import { common, components } from "replugged";
-import { KeybindRecorder } from "../lib/requiredModules";
 import * as Types from "../types";
+import { KeybindRecorder } from "../lib/requiredModules";
+
 const { React } = common;
 const { FormItem } = components;
+console.log(Types);
 
 class CloseButton extends Types.CloseButton {
   render() {
@@ -29,7 +31,7 @@ export class KeybindRecorderItem extends Types.KeybindRecorderItem {
     super(props);
     // eslint-disable-next-line no-undefined
     props.clearable = props.clearable == undefined ? true : props.clearable;
-    this.state = { value: this.props.value };
+    this.state = { value: props.value };
     this.clear = this.clear.bind(this);
   }
 
@@ -82,8 +84,6 @@ export class KeybindRecorderItem extends Types.KeybindRecorderItem {
                   cursor: "pointer",
                 },
               }}>
-              {/*
-            // @ts-ignore - LEGIT have no idea how to fix this i don't do tsx/jsx stuff - mooskyfish*/}
               <CloseButton
                 {...{
                   onClick: this.clear,
