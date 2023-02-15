@@ -4,13 +4,6 @@ import { common, util } from "replugged";
 import { PluginInjector } from "../index";
 import * as Types from "../types";
 const { React } = common;
-export const removeDuplicate = (item, pos, self): boolean => {
-  return self.indexOf(item) == pos;
-};
-
-export const ascending = (a, b): number => {
-  return a - b;
-};
 
 export const filterOutObjectKey = (object: object, keys: string[]) =>
   Object.keys(object)
@@ -20,7 +13,7 @@ export const filterOutObjectKey = (object: object, keys: string[]) =>
       return obj;
     }, {});
 
-const findInTree = (
+export const findInTree = (
   tree: object,
   searchFilter: Types.DefaultTypes.AnyFunction,
   { walkable = null, ignore = [] } = {},
