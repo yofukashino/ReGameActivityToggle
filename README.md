@@ -1,4 +1,4 @@
-### RerGameActivityToggle
+### ReGameActivityToggle
 
 A game activity toggle option in either the status picker or the user panel or by keybind.
 
