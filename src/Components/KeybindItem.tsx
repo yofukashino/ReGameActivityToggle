@@ -1,8 +1,26 @@
+/* eslint-disable eqeqeq */
 import { common, components } from "replugged";
 import { KeybindRecorder } from "../lib/requiredModules";
 const { React } = common;
 const { FormItem } = components;
-class CloseButton extends React.Component {
+class CommonTypes extends React.Component {
+  props: {
+    title?: string;
+    note?: string;
+    size?: string;
+    className?: string;
+    value?: any;
+    onClick?: () => void;
+    onChange?: (arg0: unknown) => void;
+    disabled?: boolean;
+    clearable?: boolean;
+  };
+  state: {
+    value: any;
+  };
+}
+
+class CloseButton extends CommonTypes {
   render() {
     const size = this.props.size || "16px";
     return React.createElement(
@@ -21,7 +39,7 @@ class CloseButton extends React.Component {
   }
 }
 
-export class KeybindRecorderItem extends React.Component {
+export class KeybindRecorderItem extends CommonTypes {
   constructor(props) {
     super(props);
     // eslint-disable-next-line no-undefined
@@ -57,6 +75,8 @@ export class KeybindRecorderItem extends React.Component {
                 flexGrow: 1,
               },
             }}>
+            {/*
+            // @ts-ignore - LEGIT have no idea how to fix this i don't do tsx/jsx stuff - mooskyfish*/}
             <KeybindRecorder
               {...{
                 disabled: this.props.disabled,

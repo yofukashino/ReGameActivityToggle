@@ -2,8 +2,8 @@
 /* eslint-disable consistent-return */
 /* eslint-disable new-cap */
 import { Injector, Logger, common, components, settings, types, webpack } from "replugged";
-import { Sounds, defaultSettings } from "./lib/consts.jsx";
-import * as Utils from "./lib/utils.jsx";
+import { Sounds, defaultSettings } from "./lib/consts";
+import * as Utils from "./lib/utils";
 import "./style.css";
 import {
   AccountDetails,
@@ -14,9 +14,9 @@ import {
   StatusPickerClasses,
   WindowInfoStore,
 } from "./lib/requiredModules";
-import { registerSettings } from "./Components/Settings.jsx";
-import * as UserSettingStore from "./lib/UserSettingStore.jsx";
-import * as Icons from "./Components/Icons.jsx";
+import { registerSettings } from "./Components/Settings";
+import * as UserSettingStore from "./lib/UserSettingStore";
+import * as Icons from "./Components/Icons";
 const { toast: Toasts } = common;
 const { ContextMenu } = components;
 export const PluginInjector = new Injector();
