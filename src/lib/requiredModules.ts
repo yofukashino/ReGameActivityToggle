@@ -60,4 +60,4 @@ export const AccountDetailsClasses = webpack.getByProps(
 ) as unknown as Types.AccountDetailsClasses;
 export const KeybindRecorder = webpack.getModule((m) =>
   Utils.prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
-);
+) as unknown as Types.ReactComponent;

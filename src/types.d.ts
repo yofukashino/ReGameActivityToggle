@@ -1,8 +1,7 @@
-import { types as DefaultTypes, common } from "replugged";
+import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
-const { React } = common;
 import { ReactElement } from "react";
-export { ReactElement } from "react";
+export { ReactElement, ReactComponent } from "react";
 export interface UserSettingsActionTypes {
   AUTOMATED: number;
   DAILY: number;
@@ -63,27 +62,4 @@ export interface Settings {
   playAudio: boolean;
   showToast: boolean;
   keybind: unknown[];
-}
-export class CloseButton extends React.Component {
-  public props: {
-    size?: string;
-    className?: string;
-    onClick?: () => void;
-  };
-}
-export class KeybindRecorderItem extends React.Component {
-  public props: {
-    title?: string;
-    note?: string;
-    size?: string;
-    className?: string;
-    value?: unknown;
-    onClick?: () => void;
-    onChange?: (arg0: unknown) => void;
-    disabled?: boolean;
-    clearable?: boolean;
-  };
-  public state: {
-    value: unknown;
-  };
 }

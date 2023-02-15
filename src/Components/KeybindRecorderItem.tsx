@@ -1,13 +1,19 @@
 /* eslint-disable eqeqeq */
 import { common, components } from "replugged";
-import * as Types from "../types";
 import { KeybindRecorder } from "../lib/requiredModules";
 
 const { React } = common;
 const { FormItem } = components;
-console.log(Types);
 
-class CloseButton extends Types.CloseButton {
+class CloseButtonWithProps extends React.Component {
+  props: {
+    size?: string;
+    className?: string;
+    onClick?: () => void;
+  };
+}
+
+class CloseButton extends CloseButtonWithProps {
   render() {
     const size = this.props.size || "16px";
     return React.createElement(
@@ -26,7 +32,23 @@ class CloseButton extends Types.CloseButton {
   }
 }
 
-export class KeybindRecorderItem extends Types.KeybindRecorderItem {
+class KeybindRecorderItemWithProps extends React.Component {
+  props: {
+    title?: string;
+    note?: string;
+    size?: string;
+    className?: string;
+    value?: unknown;
+    onClick?: () => void;
+    onChange?: (arg0: unknown) => void;
+    disabled?: boolean;
+    clearable?: boolean;
+  };
+  state: {
+    value: unknown;
+  };
+}
+export class KeybindRecorderItem extends KeybindRecorderItemWithProps {
   constructor(props) {
     super(props);
     // eslint-disable-next-line no-undefined
@@ -62,8 +84,6 @@ export class KeybindRecorderItem extends Types.KeybindRecorderItem {
                 flexGrow: 1,
               },
             }}>
-            {/*
-            // @ts-ignore - LEGIT have no idea how to fix this i don't do tsx/jsx stuff - mooskyfish*/}
             <KeybindRecorder
               {...{
                 disabled: this.props.disabled,
