@@ -1,14 +1,15 @@
 import { common, components, util } from "replugged";
-import { PluginLogger, SettingValues } from "../index.jsx";
+import { PluginLogger, SettingValues } from "../index";
 const { React } = common;
-import { defaultSettings } from "../lib/consts.jsx";
+import { defaultSettings } from "../lib/consts";
 const { SwitchItem, Category } = components;
-import { KeybindRecorderItem } from "./KeybindItem.jsx";
+import { KeybindRecorderItem } from "./KeybindItem";
 export const registerSettings = () => {
   for (const [key, value] of Object.entries(defaultSettings)) {
-    if (SettingValues.has(key)) return;
+    //dirty "any" usage been used
+    if (SettingValues.has(key as any)) return;
     PluginLogger.log(`Adding new setting ${key} with value`, value);
-    SettingValues.set(key, value);
+    SettingValues.set(key as any, value);
   }
 };
 export const Settings = () => {

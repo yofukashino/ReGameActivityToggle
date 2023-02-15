@@ -1,6 +1,17 @@
-import { webpack } from "replugged";
-import * as Utils from "./utils.jsx";
-export const WindowInfoStore = webpack.getByProps("isFocused", "isElementFullScreen");
+import { types, webpack } from "replugged";
+import * as Utils from "./utils";
+interface windowinfocommands {
+  isFocused: () => boolean;
+  addChangeListener: (arg0: unknown) => void;
+  removeChangeListener: (arg0: unknown) => void;
+  isElementFullScreen: unknown;
+}
+export const WindowInfoStore = webpack.getByProps(
+  "isFocused",
+  "isElementFullScreen",
+  "addChangeListener",
+  "removeChangeListener",
+) as windowinfocommands;
 
 export const KeybindUtils = {
   module: webpack.getBySource("numpad plus"),
@@ -44,7 +55,9 @@ export const UserSettingsActionTypes = webpack.getExportsForProps(UserSettingsPr
 
 export const PanelButton = webpack.getBySource("Masks.PANEL_BUTTON");
 
-export const { AccountDetails } = webpack.getBySource("account panel v2");
+export const { AccountDetails } = webpack.getBySource<{
+  AccountDetails: types.AnyFunction;
+}>("account panel v2");
 
 export const KeybindRecorder = webpack.getModule((m) =>
   Utils.prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),

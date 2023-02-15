@@ -1,4 +1,4 @@
-export const Controller = (width, height) => (
+export const Controller = (width: string, height: string) => (
   <svg
     {...{
       viewBox: "0 0 24 24",

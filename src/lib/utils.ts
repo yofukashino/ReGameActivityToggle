@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable no-prototype-builtins */
 import { common } from "replugged";
 const { React } = common;
@@ -53,6 +54,7 @@ export const isObject = (testMaterial) =>
 export const hasProps = (mod, props) => isObject(mod) && props.every((prop) => prop in mod);
 
 export const clearObject = (obj) => {
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
   for (const key in obj) delete obj[key];
 };
 
@@ -87,4 +89,6 @@ export const addChilds = (component, childrens) => {
 
 export const prototypeChecker = (ModuleExports, Protos) =>
   isObject(ModuleExports) &&
-  Protos.every((p) => Object.values(ModuleExports).some((m) => m?.prototype?.[p]));
+  Protos.every((p) =>
+    Object.values(ModuleExports).some((m) => (m as { prototype: () => void })?.prototype?.[p]),
+  );
