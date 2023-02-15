@@ -84,6 +84,6 @@ export class KeybindRecorderItem extends React.Component {
     clearable?: boolean;
   };
   public state: {
-    value: boolean;
+    value: unknown;
   };
 }
