@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable no-prototype-builtins */
-import { common } from "replugged";
+import { common, util } from "replugged";
+import { PluginInjector } from "../index";
+import * as Types from "../types";
 const { React } = common;
-export const removeDuplicate = (item, pos, self) => {
+export const removeDuplicate = (item, pos, self): boolean => {
   return self.indexOf(item) == pos;
 };
 
-export const ascending = (a, b) => {
+export const ascending = (a, b): number => {
   return a - b;
 };
 
-export const filterOutObjectKey = (object, keys) =>
+export const filterOutObjectKey = (object: object, keys: string[]) =>
   Object.keys(object)
     .filter((key) => !keys.includes(key))
     .reduce((obj, key) => {
@@ -18,7 +20,11 @@ export const filterOutObjectKey = (object, keys) =>
       return obj;
     }, {});
 
-const findInTree = (tree, searchFilter, { walkable = null, ignore = [] } = {}) => {
+const findInTree = (
+  tree: object,
+  searchFilter: Types.DefaultTypes.AnyFunction,
+  { walkable = null, ignore = [] } = {},
+) => {
   if (typeof searchFilter === "string") {
     if (tree.hasOwnProperty(searchFilter)) return tree[searchFilter];
   } else if (searchFilter(tree)) {
@@ -44,40 +50,48 @@ const findInTree = (tree, searchFilter, { walkable = null, ignore = [] } = {}) =
   return tempReturn;
 };
 
-export const findInReactTree = (tree, searchFilter) => {
+export const findInReactTree = (
+  tree: Types.ReactElement,
+  searchFilter: Types.DefaultTypes.AnyFunction,
+) => {
   return findInTree(tree, searchFilter, { walkable: ["props", "children", "child", "sibling"] });
 };
 
 export const isObject = (testMaterial) =>
   typeof testMaterial === "object" && !Array.isArray(testMaterial) && testMaterial != null;
 
-export const hasProps = (mod, props) => isObject(mod) && props.every((prop) => prop in mod);
+export const hasProps = (mod: object, props: string[]) =>
+  isObject(mod) && props.every((prop) => prop in mod);
 
-export const clearObject = (obj) => {
+export const clearObject = (obj: object) => {
   // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
   for (const key in obj) delete obj[key];
 };
 
-const stringify = (component) =>
+const stringify = (component: Types.ReactElement): string =>
   JSON.stringify(component, (_, symbol) =>
     typeof symbol === "symbol" ? `$$Symbol:${Symbol.keyFor(symbol)}` : symbol,
   );
 
-export const prase = (component) =>
+export const prase = (component: string): Types.ReactElement =>
   JSON.parse(component, (_, symbol) => {
     const matches = symbol?.match?.(/^\$\$Symbol:(.*)$/);
     return matches ? Symbol.for(matches[1]) : symbol;
   });
-export const deepCloneReactComponent = (component) => prase(stringify(component));
+export const deepCloneReactComponent = (component: Types.ReactElement): Types.ReactElement =>
+  prase(stringify(component));
 
-export const addStyle = (component, style) => {
+export const addStyle = (component: Types.ReactElement, style: object): Types.ReactElement => {
   if (!component || !style) return;
   component = React.cloneElement(component);
   component.props.style = component.props.style ? { ...component.props.style, ...style } : style;
   return component;
 };
 
-export const addChilds = (component, childrens) => {
+export const addChilds = (
+  component: Types.ReactElement,
+  childrens: Types.ReactElement[] | Types.ReactElement,
+): Types.ReactElement => {
   if (!component || !childrens) return;
   component = React.cloneElement(component);
   if (!Array.isArray(component.props.children))
@@ -87,8 +101,20 @@ export const addChilds = (component, childrens) => {
   return component;
 };
 
-export const prototypeChecker = (ModuleExports, Protos) =>
+export const prototypeChecker = (
+  ModuleExports: Types.DefaultTypes.ModuleExports,
+  Protos: string[],
+) =>
   isObject(ModuleExports) &&
   Protos.every((p) =>
     Object.values(ModuleExports).some((m) => (m as { prototype: () => void })?.prototype?.[p]),
   );
+export const forceUpdate = (element: HTMLElement): void => {
+  if (!element) return;
+  const toForceUpdate = util.getOwnerInstance(element);
+  const forceRerender = PluginInjector.instead(toForceUpdate, "render", () => {
+    forceRerender();
+    return null;
+  });
+  toForceUpdate.forceUpdate(() => toForceUpdate.forceUpdate(() => {}));
+};

@@ -1,4 +1,5 @@
-export const Controller = (width: string, height: string) => (
+import * as Types from "../types";
+export const Controller = (width: number | string, height: number | string): Types.ReactElement => (
   <svg
     {...{
       viewBox: "0 0 24 24",

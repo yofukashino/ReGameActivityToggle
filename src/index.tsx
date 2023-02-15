@@ -1,12 +1,14 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable consistent-return */
 /* eslint-disable new-cap */
-import { Injector, Logger, common, components, settings, types, webpack } from "replugged";
+import { Injector, Logger, common, components, settings, webpack } from "replugged";
 import { Sounds, defaultSettings } from "./lib/consts";
 import * as Utils from "./lib/utils";
+import * as Types from "./types";
 import "./style.css";
 import {
   AccountDetails,
+  AccountDetailsClasses,
   KeybindUtils,
   Menu,
   PanelButton,
@@ -22,18 +24,20 @@ const { ContextMenu } = components;
 export const PluginInjector = new Injector();
 export const PluginLogger = Logger.plugin("ReGameActivityToggle");
 export const SettingValues = await settings.init("Tharki.ReGameActivityToggle", defaultSettings);
-const currentlyPressed = {};
+const currentlyPressed = {} as Types.KeybindEvent;
 const toggleGameActivity = (enabled: Boolean) => {
   if (SettingValues.get("playAudio", defaultSettings.playAudio))
     SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
+  if (SettingValues.get("userPanel", defaultSettings.userPanel))
+    Utils.forceUpdate(document.querySelector(AccountDetailsClasses.container));
 };
-const patchPanelButton = () => {
-  PluginInjector.after(AccountDetails.prototype, "render", (args, res) => {
+const patchPanelButton = (): void => {
+  PluginInjector.after(AccountDetails.prototype, "render", (args: [], res: Types.ReactElement) => {
     if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return res;
     const {
       props: { children },
-    } = Utils.findInReactTree(res, (m) =>
+    } = Utils.findInReactTree(res, (m: Types.ReactElement) =>
       Utils.hasProps(m?.props, ["basis", "children", "grow", "shrink"]),
     );
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
@@ -65,18 +69,16 @@ const patchPanelButton = () => {
     );
   });
 };
-interface navid {
-  navId: string;
-}
+
 const patchStatusPicker = () => {
   const patchFunctionKey = webpack.getFunctionKeyBySource(
-    Menu as types.ObjectExports, //shut up vscode
+    Menu as Types.DefaultTypes.ObjectExports,
     ".navId",
   ) as never;
-  PluginInjector.before(Menu, patchFunctionKey, (args) => {
+  PluginInjector.before(Menu, patchFunctionKey, (args: Types.MenuArgs) => {
     if (
       !SettingValues.get("statusPicker", defaultSettings.statusPicker) ||
-      (args[0] as navid).navId != "account"
+      args[0].navId != "account"
     )
       return args;
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
@@ -95,7 +97,7 @@ const patchStatusPicker = () => {
         }}
       />,
     );
-    const [{ children }] = args as any;
+    const [{ children }] = args;
     const switchAccount = children.find((c) => c?.props?.children?.key == "switch-account");
     if (!children.find((c) => c?.props?.className == "tharki"))
       children.splice(
@@ -143,22 +145,18 @@ const patchStatusPicker = () => {
       );
   });
 };
-const applyInjections = () => {
+const applyInjections = (): void => {
   patchStatusPicker();
   patchPanelButton();
 };
-interface keybindlistnertypes {
-  length: number;
-  every: types.AnyFunction;
-}
-const keybindListener = (e) => {
-  const keybindEvent = KeybindUtils.toEvent(
+const keybindListener = (e: Types.KeybindEvent): void => {
+  const keybindEvents = KeybindUtils.toEvent(
     SettingValues.get("keybind", defaultSettings.keybind),
-  ) as keybindlistnertypes;
+  ) as Types.KeybindEvents;
   if (
     e.type == "keyup" &&
-    keybindEvent.length &&
-    keybindEvent.every(
+    keybindEvents.length &&
+    keybindEvents.every(
       (ev) =>
         Object.keys(ev)
           .filter((k) => k !== "keyCode")
@@ -172,25 +170,25 @@ const keybindListener = (e) => {
   }
   currentlyPressed[e.keyCode] = e.type == "keydown";
 };
-const cleanKeybindsCallback = () => {
+const cleanKeybindsCallback = (): void => {
   if (WindowInfoStore.isFocused()) Utils.clearObject(currentlyPressed);
 };
-const addListeners = () => {
+const addListeners = (): void => {
   window.addEventListener("keydown", keybindListener);
   window.addEventListener("keyup", keybindListener);
   WindowInfoStore.addChangeListener(cleanKeybindsCallback);
 };
-export const start = () => {
+export const start = (): void => {
   registerSettings();
   applyInjections();
   addListeners();
 };
-const removeListeners = () => {
+const removeListeners = (): void => {
   window.removeEventListener("keydown", keybindListener);
   window.removeEventListener("keyup", keybindListener);
   WindowInfoStore.removeChangeListener(cleanKeybindsCallback);
 };
-export const stop = () => {
+export const stop = (): void => {
   PluginInjector.uninjectAll();
   removeListeners();
 };

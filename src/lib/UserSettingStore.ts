@@ -3,20 +3,25 @@ import {
   UserSettingsProtoStore,
   UserSettingsProtoUtils,
 } from "./requiredModules";
-import * as Utils from "./utils";
-export const getSetting = (category, key): boolean => {
+import * as Types from "../types";
+const { INFREQUENT_USER_ACTION } = UserSettingsActionTypes;
+export const getSetting = (category: string, key: string): boolean => {
   if (!category || !key) return;
   return UserSettingsProtoStore?.settings?.[category]?.[key]?.value;
 };
 export const getSettingsStore = (): {
-  updateAsync: (arg0: unknown, arg1: unknown, arg2: unknown) => void;
+  updateAsync: (
+    category: string,
+    setter: Types.DefaultTypes.AnyFunction,
+    type: string | number,
+  ) => void;
 } => {
   //i legit don't know what this doing
   return (Object.entries(UserSettingsProtoUtils)?.find?.(
     (n) => n?.[1]?.updateAsync && n?.[1]?.ProtoClass?.typeName?.endsWith(".PreloadedUserSettings"),
   ) || [])[1];
 };
-export const setSetting = (category, key, value): boolean => {
+export const setSetting = (category: string, key: string, value: boolean): boolean => {
   if (!category || !key) return;
   let store = getSettingsStore();
   if (store)
@@ -24,10 +29,8 @@ export const setSetting = (category, key, value): boolean => {
       category,
       (settings) => {
         if (!settings) return;
-        if (!settings[key]) settings[key] = {};
-        if (Utils.isObject(value)) for (const k in value) settings[key][k] = value[k];
-        else settings[key].value = value;
+        settings[key].value = value;
       },
-      UserSettingsActionTypes.INFREQUENT_USER_ACTION,
+      INFREQUENT_USER_ACTION,
     );
 };
