@@ -44,7 +44,6 @@ const patchPanelButton = (): void => {
       } = flexBox as Types.ReactElement;
       const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
       const Icon = Icons.controller("20", "20");
-
       const DisabledIcon = Utils.addChilds(
         Icon,
         <polygon
