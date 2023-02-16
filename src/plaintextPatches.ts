@@ -14,13 +14,4 @@ export default [
       },
     ],
   },
-  {
-    find: "Menu API only allows Items and groups of Items as children",
-    replacements: [
-      {
-        match: /(function Se\(\)\{)(return\(\d,[A-Za-z]\.jsx\)\("div")/gm,
-        replace: `$1 console.log("gg");$2`,
-      },
-    ],
-  },
 ] as Types.DefaultTypes.PlaintextPatch[];
