@@ -7,7 +7,7 @@ import * as Types from "../types";
 const { INFREQUENT_USER_ACTION } = UserSettingsActionTypes;
 export const getSetting = (category: string, key: string): boolean => {
   if (!category || !key) return;
-  return UserSettingsProtoStore?.settings?.[category]?.[key]?.value;
+  return Boolean(UserSettingsProtoStore?.settings?.[category]?.[key]?.value);
 };
 export const getSettingsStore = (): {
   updateAsync: (

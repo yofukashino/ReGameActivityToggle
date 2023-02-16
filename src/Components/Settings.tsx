@@ -25,7 +25,11 @@ export const Settings = (): Types.ReactElement => {
           {...{
             title: "Toggle by keybind:",
             note: "Keybind to toggle showing game activity.",
-            ...util.useSetting(SettingValues, "keybind", defaultSettings.keybind),
+            ...(util.useSetting(
+              SettingValues,
+              "keybind",
+              defaultSettings.keybind,
+            ) as Types.KeybindRecorderItemSettingUtil),
           }}
         />
         <SwitchItem

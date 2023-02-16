@@ -1,6 +1,3 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable consistent-return */
-/* eslint-disable new-cap */
 import { Injector, Logger, common, components, settings, webpack } from "replugged";
 import { Sounds, defaultSettings } from "./lib/consts";
 import * as Utils from "./lib/utils";
@@ -24,7 +21,7 @@ const { ContextMenu } = components;
 export const PluginInjector = new Injector();
 export const PluginLogger = Logger.plugin("ReGameActivityToggle");
 export const SettingValues = await settings.init("Tharki.ReGameActivityToggle", defaultSettings);
-const currentlyPressed = {} as Types.KeybindEvent;
+const currentlyPressed = new Map();
 const toggleGameActivity = (enabled: Boolean) => {
   if (SettingValues.get("playAudio", defaultSettings.playAudio))
     SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
@@ -33,56 +30,59 @@ const toggleGameActivity = (enabled: Boolean) => {
     Utils.forceUpdate(document.querySelector(AccountDetailsClasses.container));
 };
 const patchPanelButton = (): void => {
-  PluginInjector.after(AccountDetails.prototype, "render", (args: [], res: Types.ReactElement) => {
-    if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return res;
-    const {
-      props: { children },
-    } = Utils.findInReactTree(res, (m: Types.ReactElement) =>
-      Utils.hasProps(m?.props, ["basis", "children", "grow", "shrink"]),
-    );
-    const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
-    const Icon = Icons.Controller("20", "20");
+  PluginInjector.after(
+    AccountDetails.prototype,
+    "render",
+    (args: [], res: Types.ReactElement): Types.ReactElement => {
+      if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return res;
+      const flexBox = Utils.findInReactTree(res, (m: Types.ReactElement) =>
+        Utils.hasProps(m?.props, ["basis", "children", "grow", "shrink"]),
+      );
+      if (!flexBox) return res;
+      const {
+        props: { children },
+      } = flexBox as Types.ReactElement;
+      const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
+      const Icon = Icons.controller("20", "20");
 
-    const DisabledIcon = Utils.addChilds(
-      Icon,
-      <polygon
-        {...{
-          style: {
-            fill: "#a61616",
-          },
-          points:
-            "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
-        }}
-      />,
-    );
-    children.unshift(
-      // @ts-expect-error neutral face
-      <PanelButton
-        {...{
-          icon: () => (enabled ? Icon : DisabledIcon),
-          tooltipText: `${enabled ? "Hide" : "Show"} Game Activity`,
-          onClick: () => {
-            toggleGameActivity(enabled);
-          },
-        }}
-      />,
-    );
-  });
+      const DisabledIcon = Utils.addChilds(
+        Icon,
+        <polygon
+          {...{
+            style: {
+              fill: "#a61616",
+            },
+            points:
+              "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
+          }}
+        />,
+      );
+      children.unshift(
+        <PanelButton
+          {...{
+            icon: () => (enabled ? Icon : DisabledIcon),
+            tooltipText: `${enabled ? "Hide" : "Show"} Game Activity`,
+            onClick: () => {
+              toggleGameActivity(enabled);
+            },
+          }}
+        />,
+      );
+      return res;
+    },
+  );
 };
 
 const patchStatusPicker = () => {
-  const patchFunctionKey = webpack.getFunctionKeyBySource(
-    Menu as Types.DefaultTypes.ObjectExports,
-    ".navId",
-  ) as never;
-  PluginInjector.before(Menu, patchFunctionKey, (args: Types.MenuArgs) => {
+  const patchFunctionKey = webpack.getFunctionKeyBySource(Menu, ".navId") as never;
+  PluginInjector.before(Menu, patchFunctionKey, (args: Types.MenuArgs): Types.MenuArgs => {
     if (
       !SettingValues.get("statusPicker", defaultSettings.statusPicker) ||
-      args[0].navId != "account"
+      args[0].navId !== "account"
     )
       return args;
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
-    const Icon = Utils.addStyle(Icons.Controller("16", "16"), {
+    const Icon = Utils.addStyle(Icons.controller("16", "16"), {
       marginLeft: "-2px",
     });
     const DisabledIcon = Utils.addChilds(
@@ -98,8 +98,8 @@ const patchStatusPicker = () => {
       />,
     );
     const [{ children }] = args;
-    const switchAccount = children.find((c) => c?.props?.children?.key == "switch-account");
-    if (!children.find((c) => c?.props?.className == "tharki"))
+    const switchAccount = children.find((c) => c?.props?.children?.key === "switch-account");
+    if (!children.find((c) => c?.props?.className === "tharki"))
       children.splice(
         children.indexOf(switchAccount),
         0,
@@ -110,12 +110,12 @@ const patchStatusPicker = () => {
           }}
         />,
       );
-    const section = children.find((c) => c?.props?.className == "tharki");
-    if (!section.props.children.find((m) => m?.props?.id == "game-activity"))
+    const section = children.find((c) => c?.props?.className === "tharki");
+    if (!section.props.children.find((m) => m?.props?.id === "game-activity"))
       section.props.children.push(
-        // @ts-expect-error don't know what to do here
         <ContextMenu.MenuItem
           {...{
+            label: "Game Activity",
             id: "game-activity",
             keepItemStyles: true,
             action: () => {
@@ -124,17 +124,17 @@ const patchStatusPicker = () => {
             render: () => (
               <div
                 {...{
-                  className: StatusPickerClasses.statusItem as string,
+                  className: StatusPickerClasses.statusItem,
                   "aria-label": `${enabled ? "Hide" : "Show"} Game Activity`,
                 }}>
                 {enabled ? DisabledIcon : Icon}
                 <div
                   {...{
-                    className: StatusPickerClasses.status as string,
+                    className: StatusPickerClasses.status,
                   }}>{`${enabled ? "Hide" : "Show"} Game Activity`}</div>
                 <div
                   {...{
-                    className: StatusPickerClasses.description as string,
+                    className: StatusPickerClasses.description,
                   }}>{`${
                   enabled ? "Disable" : "Enable"
                 } displaying currently running game in your activity status.`}</div>
@@ -143,6 +143,7 @@ const patchStatusPicker = () => {
           }}
         />,
       );
+    return args;
   });
 };
 const applyInjections = (): void => {
@@ -154,13 +155,13 @@ const keybindListener = (e: Types.KeybindEvent): void => {
     SettingValues.get("keybind", defaultSettings.keybind),
   ) as Types.KeybindEvents;
   if (
-    e.type == "keyup" &&
+    e.type === "keyup" &&
     keybindEvents.length &&
     keybindEvents.every(
       (ev) =>
         Object.keys(ev)
           .filter((k) => k !== "keyCode")
-          .every((k) => ev[k] == e[k]) && currentlyPressed[ev.keyCode],
+          .every((k) => ev[k] === e[k]) && currentlyPressed.get(ev.keyCode),
     )
   ) {
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
@@ -168,10 +169,10 @@ const keybindListener = (e: Types.KeybindEvent): void => {
       Toasts.toast(`${enabled ? "Disabled" : "Enabled"} Game Activity`, Toasts.Kind.SUCCESS);
     toggleGameActivity(enabled);
   }
-  currentlyPressed[e.keyCode] = e.type == "keydown";
+  currentlyPressed.set(e.keyCode, e.type === "keydown");
 };
 const cleanKeybindsCallback = (): void => {
-  if (WindowInfoStore.isFocused()) Utils.clearObject(currentlyPressed);
+  if (WindowInfoStore.isFocused()) currentlyPressed.clear();
 };
 const addListeners = (): void => {
   window.addEventListener("keydown", keybindListener);

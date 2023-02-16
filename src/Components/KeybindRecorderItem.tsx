@@ -1,7 +1,6 @@
-/* eslint-disable eqeqeq */
 import { common, components } from "replugged";
 import { KeybindRecorder } from "../lib/requiredModules";
-
+import * as Utils from "../lib/utils";
 const { React } = common;
 const { FormItem } = components;
 
@@ -31,28 +30,26 @@ class CloseButton extends CloseButtonWithProps {
     );
   }
 }
-
+interface KeybindRecorderItemProps {
+  title?: string;
+  note?: string;
+  size?: string;
+  className?: string;
+  value?: boolean | string | unknown[];
+  onChange?: (value: boolean | string | unknown[]) => void;
+  disabled?: boolean;
+  clearable?: boolean;
+}
 class KeybindRecorderItemWithProps extends React.Component {
-  props: {
-    title?: string;
-    note?: string;
-    size?: string;
-    className?: string;
-    value?: unknown;
-    onClick?: () => void;
-    onChange?: (arg0: unknown) => void;
-    disabled?: boolean;
-    clearable?: boolean;
-  };
+  props: KeybindRecorderItemProps;
   state: {
-    value: unknown;
+    value: boolean | string | unknown[];
   };
 }
 export class KeybindRecorderItem extends KeybindRecorderItemWithProps {
-  constructor(props) {
+  constructor(props: KeybindRecorderItemProps) {
     super(props);
-    // eslint-disable-next-line no-undefined
-    props.clearable = props.clearable == undefined ? true : props.clearable;
+    props.clearable = Utils.hasProps(props, ["clearable"]) ? true : props.clearable;
     this.state = { value: props.value };
     this.clear = this.clear.bind(this);
   }
@@ -88,7 +85,7 @@ export class KeybindRecorderItem extends KeybindRecorderItemWithProps {
               {...{
                 disabled: this.props.disabled,
                 defaultValue: this.state.value,
-                onChange: (value) => {
+                onChange: (value: boolean | string | unknown[]) => {
                   this.setState({ value });
                   this.props.onChange(value);
                 },

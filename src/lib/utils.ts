@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable no-prototype-builtins */
 import { common, util } from "replugged";
 import { PluginInjector } from "../index";
 import * as Types from "../types";
 const { React } = common;
 
-export const filterOutObjectKey = (object: object, keys: string[]) =>
+export const filterOutObjectKey = (object: object, keys: string[]): object =>
   Object.keys(object)
     .filter((key) => !keys.includes(key))
     .reduce((obj, key) => {
@@ -17,14 +15,13 @@ export const findInTree = (
   tree: object,
   searchFilter: Types.DefaultTypes.AnyFunction,
   { walkable = null, ignore = [] } = {},
-) => {
+): unknown => {
   if (typeof searchFilter === "string") {
-    if (tree.hasOwnProperty(searchFilter)) return tree[searchFilter];
+    if (Object.hasOwnProperty.call(tree, searchFilter)) return tree[searchFilter];
   } else if (searchFilter(tree)) {
     return tree;
   }
-  // eslint-disable-next-line no-undefined
-  if (typeof tree !== "object" || tree == null) return undefined;
+  if (typeof tree !== "object" || tree == null) return;
 
   let tempReturn;
   if (Array.isArray(tree)) {
@@ -35,7 +32,7 @@ export const findInTree = (
   } else {
     const toWalk = walkable == null ? Object.keys(tree) : walkable;
     for (const key of toWalk) {
-      if (!tree.hasOwnProperty(key) || ignore.includes(key)) continue;
+      if (!Object.hasOwnProperty.call(tree, key) || ignore.includes(key)) continue;
       tempReturn = findInTree(tree[key], searchFilter, { walkable, ignore });
       if (typeof tempReturn !== "undefined") return tempReturn;
     }
@@ -46,20 +43,15 @@ export const findInTree = (
 export const findInReactTree = (
   tree: Types.ReactElement,
   searchFilter: Types.DefaultTypes.AnyFunction,
-) => {
+): unknown | Types.ReactElement => {
   return findInTree(tree, searchFilter, { walkable: ["props", "children", "child", "sibling"] });
 };
 
-export const isObject = (testMaterial) =>
+export const isObject = (testMaterial: unknown): boolean =>
   typeof testMaterial === "object" && !Array.isArray(testMaterial) && testMaterial != null;
 
-export const hasProps = (mod: object, props: string[]) =>
-  isObject(mod) && props.every((prop) => prop in mod);
-
-export const clearObject = (obj: object) => {
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-  for (const key in obj) delete obj[key];
-};
+export const hasProps = (mod: object, props: string[] | number[] | symbol[]): boolean =>
+  isObject(mod) && Object.hasOwnProperty.call(mod, props);
 
 const stringify = (component: Types.ReactElement): string =>
   JSON.stringify(component, (_, symbol) =>
@@ -97,7 +89,7 @@ export const addChilds = (
 export const prototypeChecker = (
   ModuleExports: Types.DefaultTypes.ModuleExports,
   Protos: string[],
-) =>
+): boolean =>
   isObject(ModuleExports) &&
   Protos.every((p) =>
     Object.values(ModuleExports).some((m) => (m as { prototype: () => void })?.prototype?.[p]),

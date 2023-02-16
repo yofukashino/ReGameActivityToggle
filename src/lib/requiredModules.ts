@@ -31,15 +31,19 @@ export const SoundUtils = {
   },
 };
 
-export const StatusPickerClasses = webpack.getByProps("status", "statusItem");
+export const StatusPickerClasses = webpack.getByProps(
+  "status",
+  "statusItem",
+) as unknown as Types.StatusPickerClasses;
 
 export const Menu = webpack.getBySource(
   "Menu API only allows Items and groups of Items as children",
-);
+) as unknown as Types.DefaultTypes.ObjectExports;
 
 export const UserSettingsProtoStore = webpack.getByProps(
   "getGuildFolders",
   "getGuildRecentsDismissedAt",
+  "settings",
 );
 
 export const UserSettingsProtoUtils = webpack.getBySource("UserSettingsProtoLastWriteTimes");
@@ -49,7 +53,9 @@ export const UserSettingsActionTypes = webpack.getExportsForProps(UserSettingsPr
   "INFREQUENT_USER_ACTION",
 ]) as unknown as Types.UserSettingsActionTypes;
 
-export const PanelButton = webpack.getBySource("Masks.PANEL_BUTTON");
+export const PanelButton = webpack.getBySource(
+  "Masks.PANEL_BUTTON",
+) as unknown as Types.ComponentClass;
 
 export const { AccountDetails } = webpack.getBySource<{
   AccountDetails: Types.DefaultTypes.AnyFunction;
@@ -60,4 +66,4 @@ export const AccountDetailsClasses = webpack.getByProps(
 ) as unknown as Types.AccountDetailsClasses;
 export const KeybindRecorder = webpack.getModule((m) =>
   Utils.prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
-) as unknown as Types.ReactComponent;
+) as unknown as Types.ComponentClass;
