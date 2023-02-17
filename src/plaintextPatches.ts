@@ -5,7 +5,7 @@ export default [
     find: "account panel v2",
     replacements: [
       {
-        match: /([A-Za-z]\.[A-Za-z]\([A-Za-z],\{[A-Za-z]+:\(\)=>[A-Za-z]+)(\}\);)/,
+        match: /([A-Za-z]\.[A-Za-z]\([A-Za-z],\{default:\(\)=>[A-Za-z]+)(\}\))/,
         replace: `$1,AccountDetails: () => accountDetails$2`,
       },
       {

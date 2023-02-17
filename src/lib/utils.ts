@@ -50,10 +50,10 @@ export const findInReactTree = (
 export const isObject = (testMaterial: unknown): boolean =>
   typeof testMaterial === "object" && !Array.isArray(testMaterial) && testMaterial != null;
 
-export const hasProps = (mod: object, props: string[] | number[] | symbol[]): boolean =>
-  isObject(mod) && Object.hasOwnProperty.call(mod, props);
+export const hasProps = (mod: object, props: string[] | unknown[]): boolean =>
+  isObject(mod) && props.every((prop: string | unknown) => Object.hasOwnProperty.call(mod, prop));
 
-const stringify = (component: Types.ReactElement): string =>
+export const stringify = (component: Types.ReactElement): string =>
   JSON.stringify(component, (_, symbol) =>
     typeof symbol === "symbol" ? `$$Symbol:${Symbol.keyFor(symbol)}` : symbol,
   );

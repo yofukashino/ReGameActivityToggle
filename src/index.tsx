@@ -35,9 +35,11 @@ const patchPanelButton = (): void => {
     "render",
     (args: [], res: Types.ReactElement): Types.ReactElement => {
       if (!SettingValues.get("userPanel", defaultSettings.userPanel)) return res;
+
       const flexBox = Utils.findInReactTree(res, (m: Types.ReactElement) =>
         Utils.hasProps(m?.props, ["basis", "children", "grow", "shrink"]),
       );
+      console.log(res, flexBox);
       if (!flexBox) return res;
       const {
         props: { children },
