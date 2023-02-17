@@ -39,7 +39,6 @@ const patchPanelButton = (): void => {
       const flexBox = Utils.findInReactTree(res, (m: Types.ReactElement) =>
         Utils.hasProps(m?.props, ["basis", "children", "grow", "shrink"]),
       );
-      console.log(res, flexBox);
       if (!flexBox) return res;
       const {
         props: { children },
