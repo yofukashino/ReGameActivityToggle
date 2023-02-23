@@ -14,8 +14,9 @@ export const filterOutObjectKey = (object: object, keys: string[]): object =>
 export const findInTree = (
   tree: object,
   searchFilter: Types.DefaultTypes.AnyFunction,
-  { walkable = null, ignore = [] } = {},
+  searchOptions: {ignore?: string[], walkable?: null | string[]},
 ): unknown => {
+  const { walkable = null, ignore = [] } = searchOptions;
   if (typeof searchFilter === "string") {
     if (Object.hasOwnProperty.call(tree, searchFilter)) return tree[searchFilter];
   } else if (searchFilter(tree)) {
@@ -23,7 +24,7 @@ export const findInTree = (
   }
   if (typeof tree !== "object" || tree == null) return;
 
-  let tempReturn;
+  let tempReturn: unknown;
   if (Array.isArray(tree)) {
     for (const value of tree) {
       tempReturn = findInTree(value, searchFilter, { walkable, ignore });
@@ -31,7 +32,7 @@ export const findInTree = (
     }
   } else {
     const toWalk = walkable == null ? Object.keys(tree) : walkable;
-    for (const key of toWalk) {
+    for (const key  of toWalk) {
       if (!Object.hasOwnProperty.call(tree, key) || ignore.includes(key)) continue;
       tempReturn = findInTree(tree[key], searchFilter, { walkable, ignore });
       if (typeof tempReturn !== "undefined") return tempReturn;
@@ -66,7 +67,7 @@ export const prase = (component: string): Types.ReactElement =>
 export const deepCloneReactComponent = (component: Types.ReactElement): Types.ReactElement =>
   prase(stringify(component));
 
-export const addStyle = (component: Types.ReactElement, style: object): Types.ReactElement => {
+export const addStyle = (component: Types.ReactElement, style: object): Types.ReactElement | undefined => {
   if (!component || !style) return;
   component = React.cloneElement(component);
   component.props.style = component.props.style ? { ...component.props.style, ...style } : style;
@@ -76,7 +77,7 @@ export const addStyle = (component: Types.ReactElement, style: object): Types.Re
 export const addChilds = (
   component: Types.ReactElement,
   childrens: Types.ReactElement[] | Types.ReactElement,
-): Types.ReactElement => {
+): Types.ReactElement | undefined => {
   if (!component || !childrens) return;
   component = React.cloneElement(component);
   if (!Array.isArray(component.props.children))
