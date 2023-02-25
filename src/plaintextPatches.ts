@@ -2,7 +2,7 @@ import * as Types from "./types";
 
 export default [
   {
-    find: "account panel v2",
+    find: "isCopiedStreakGodlike",
     replacements: [
       {
         match: /([A-Za-z]\.[A-Za-z]\([A-Za-z],\{default:\(\)=>[A-Za-z]+)(\}\))/,

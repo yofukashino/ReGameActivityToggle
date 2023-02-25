@@ -56,6 +56,9 @@ export interface AccountDetailsClasses {
   withTagAsButton: string;
   withTagless: string;
 }
+export interface AccountDetails {
+  AccountDetails: DefaultTypes.AnyFunction;
+}
 export interface Settings {
   statusPicker: boolean;
   userPanel: boolean;
