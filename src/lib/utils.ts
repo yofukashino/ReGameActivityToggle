@@ -14,7 +14,7 @@ export const filterOutObjectKey = (object: object, keys: string[]): object =>
 export const findInTree = (
   tree: object,
   searchFilter: Types.DefaultTypes.AnyFunction,
-  searchOptions: {ignore?: string[], walkable?: null | string[]},
+  searchOptions: { ignore?: string[]; walkable?: null | string[] },
 ): unknown => {
   const { walkable = null, ignore = [] } = searchOptions;
   if (typeof searchFilter === "string") {
@@ -32,7 +32,7 @@ export const findInTree = (
     }
   } else {
     const toWalk = walkable == null ? Object.keys(tree) : walkable;
-    for (const key  of toWalk) {
+    for (const key of toWalk) {
       if (!Object.hasOwnProperty.call(tree, key) || ignore.includes(key)) continue;
       tempReturn = findInTree(tree[key], searchFilter, { walkable, ignore });
       if (typeof tempReturn !== "undefined") return tempReturn;
@@ -67,7 +67,10 @@ export const prase = (component: string): Types.ReactElement =>
 export const deepCloneReactComponent = (component: Types.ReactElement): Types.ReactElement =>
   prase(stringify(component));
 
-export const addStyle = (component: Types.ReactElement, style: object): Types.ReactElement | undefined => {
+export const addStyle = (
+  component: Types.ReactElement,
+  style: object,
+): Types.ReactElement | undefined => {
   if (!component || !style) return;
   component = React.cloneElement(component);
   component.props.style = component.props.style ? { ...component.props.style, ...style } : style;
