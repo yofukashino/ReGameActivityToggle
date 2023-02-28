@@ -9,7 +9,7 @@ export default [
         replace: `$1,AccountDetails: () => accountDetails$2`,
       },
       {
-        match: /var ([A-Za-z0-9]+)=(function.*\}.*\);.*hoveringOnMute:!1)/,
+        match: /var (.*)=(function.*\}.*\);.*hoveringOnMute:!1)/,
         replace: `var $1,accountDetails;$1=accountDetails=$2`,
       },
     ],
