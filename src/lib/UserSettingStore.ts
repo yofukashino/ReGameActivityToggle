@@ -4,7 +4,6 @@ import {
   UserSettingsProtoUtils,
 } from "./requiredModules";
 import * as Types from "../types";
-const { INFREQUENT_USER_ACTION } = UserSettingsActionTypes;
 export const getSetting = (category: string, key: string): boolean => {
   if (!category || !key) return;
   return Boolean(UserSettingsProtoStore?.settings?.[category]?.[key]?.value);
@@ -30,6 +29,6 @@ export const setSetting = (category: string, key: string, value: boolean): boole
         if (!settings) return;
         settings[key].value = value;
       },
-      INFREQUENT_USER_ACTION,
+      UserSettingsActionTypes.INFREQUENT_USER_ACTION,
     );
 };
