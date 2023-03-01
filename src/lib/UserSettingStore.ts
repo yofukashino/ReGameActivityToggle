@@ -16,10 +16,9 @@ export const getSettingsStore = (): {
     type: string | number,
   ) => void;
 } => {
-  //i legit don't know what this doing
-  return (Object.entries(UserSettingsProtoUtils)?.find?.(
-    (n) => n?.[1]?.updateAsync && n?.[1]?.ProtoClass?.typeName?.endsWith(".PreloadedUserSettings"),
-  ) || [])[1];
+  return Object.values(UserSettingsProtoUtils)?.find?.(
+    (n) => n?.updateAsync && n?.ProtoClass?.typeName?.endsWith(".PreloadedUserSettings"),
+  );
 };
 export const setSetting = (category: string, key: string, value: boolean): boolean => {
   if (!category || !key) return;

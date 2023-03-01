@@ -10,14 +10,12 @@ specifiers:
   eslint-plugin-node: ^11.1.0
   eslint-plugin-react: ^7.31.10
   prettier: ^2.8.1
-  replugged: 4.0.0-beta0.29
+  replugged: v4.0.0-rc.1
   typescript: ^4.8.4
-
-dependencies:
-  '@types/react': 18.0.28
 
 devDependencies:
   '@types/node': 18.14.1
+  '@types/react': 18.0.28
   '@typescript-eslint/eslint-plugin': 5.53.0_ny4s7qc6yg74faf3d6xty2ofzy
   '@typescript-eslint/parser': 5.53.0_7kw3g6rralp5ps6mg3uyzz6azm
   eslint: 8.34.0
@@ -25,7 +23,7 @@ devDependencies:
   eslint-plugin-node: 11.1.0_eslint@8.34.0
   eslint-plugin-react: 7.32.2_eslint@8.34.0
   prettier: 2.8.4
-  replugged: 4.0.0-beta0.29
+  replugged: 4.0.0-rc.1
   typescript: 4.9.5
 
 packages:
@@ -1397,7 +1395,7 @@ packages:
 
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
-    dev: false
+    dev: true
 
   /@types/react/18.0.28:
     resolution: {integrity: sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew==}
@@ -1405,11 +1403,11 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.1
-    dev: false
+    dev: true
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
-    dev: false
+    dev: true
 
   /@types/semver/7.3.13:
     resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}
@@ -1874,7 +1872,7 @@ packages:
 
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
-    dev: false
+    dev: true
 
   /data-uri-to-buffer/4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
@@ -3314,8 +3312,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /replugged/4.0.0-beta0.29:
-    resolution: {integrity: sha512-Z2Q+gFSfHq2CbvSVI6SrfbaYpiYJlotpi+/xuZRyIPnFFeKYFbIVL1xWTuCjEWok41/6viiwddgk70iAhD5ljg==}
+  /replugged/4.0.0-rc.1:
+    resolution: {integrity: sha512-vjSx5Rzn/1ocdKqXzvrw0VRUBtNVRKWkzAwkpiDo/LNXoEGiCj/l25XN4mXGO9rZaU+dK+EUl3k7pisuwcPgxQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:

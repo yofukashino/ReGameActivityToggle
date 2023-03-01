@@ -59,16 +59,28 @@ export interface AccountDetailsClasses {
 export interface AccountDetails {
   AccountDetails: DefaultTypes.AnyFunction;
 }
-export interface Settings {
-  statusPicker: boolean;
-  userPanel: boolean;
-  playAudio: boolean;
-  showToast: boolean;
-  keybind: unknown[];
-}
+
 export interface KeybindRecorderItemSettingUtil {
   value: boolean | string | unknown[];
   onChange: (newValue: boolean | string | unknown[]) => void;
+}
+export interface CloseButtonProps {
+  size?: string;
+  className?: string;
+  onClick?: () => void;
+}
+export interface KeybindRecorderItemProps {
+  title?: string;
+  note?: string;
+  size?: string;
+  className?: string;
+  value?: boolean | string | unknown[];
+  onChange?: (value: boolean | string | unknown[]) => void;
+  disabled?: boolean;
+  clearable?: boolean;
+}
+export interface KeybindRecorderItemState {
+  value: boolean | string | unknown[];
 }
 export interface StatusPickerClasses {
   description: string;
@@ -82,4 +94,12 @@ export interface StatusPickerClasses {
   status: string;
   statusItem: string;
   statusPickerModalMenu: string;
+}
+
+export interface Settings {
+  statusPicker: boolean;
+  userPanel: boolean;
+  playAudio: boolean;
+  showToast: boolean;
+  keybind: unknown[];
 }

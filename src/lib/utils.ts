@@ -1,5 +1,8 @@
 import { common, util } from "replugged";
-import { PluginInjector } from "../index";
+import { PluginInjector, SettingValues } from "../index";
+import { AccountDetailsClasses, SoundUtils } from "./requiredModules";
+import { Sounds, defaultSettings } from "./consts";
+import * as UserSettingStore from "./UserSettingStore";
 import * as Types from "../types";
 const { React } = common;
 
@@ -106,4 +109,11 @@ export const forceUpdate = (element: HTMLElement): void => {
     return null;
   });
   toForceUpdate.forceUpdate(() => toForceUpdate.forceUpdate(() => {}));
+};
+export const toggleGameActivity = (enabled: boolean): void => {
+  if (SettingValues.get("playAudio", defaultSettings.playAudio))
+    SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
+  UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
+  if (SettingValues.get("userPanel", defaultSettings.userPanel))
+    forceUpdate(document.querySelector(AccountDetailsClasses.container));
 };
