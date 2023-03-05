@@ -115,5 +115,5 @@ export const toggleGameActivity = (enabled: boolean): void => {
     SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
   if (SettingValues.get("userPanel", defaultSettings.userPanel))
-    forceUpdate(document.querySelector(AccountDetailsClasses.container));
+    forceUpdate(document.querySelector(`.${AccountDetailsClasses.container}`));
 };

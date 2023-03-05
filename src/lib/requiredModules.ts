@@ -38,7 +38,7 @@ export const StatusPickerClasses = webpack.getByProps(
 
 export const Menu = webpack.getBySource(
   "Menu API only allows Items and groups of Items as children",
-) as unknown as Types.DefaultTypes.ObjectExports;
+) as unknown as Types.GenericModule;
 
 export const UserSettingsProtoStore = webpack.getByProps(
   "getGuildFolders",

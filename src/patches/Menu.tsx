@@ -8,7 +8,7 @@ import * as Utils from "../lib/utils";
 import * as Types from "../types";
 
 export const patchStatusPicker = (): void => {
-  const patchFunctionKey = webpack.getFunctionKeyBySource(Menu, ".navId") as never;
+  const patchFunctionKey = webpack.getFunctionKeyBySource(Menu, ".navId") as string;
   PluginInjector.before(Menu, patchFunctionKey, (args: Types.MenuArgs): Types.MenuArgs => {
     if (
       !SettingValues.get("statusPicker", defaultSettings.statusPicker) ||

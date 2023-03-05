@@ -59,7 +59,9 @@ export interface AccountDetailsClasses {
 export interface AccountDetails {
   AccountDetails: DefaultTypes.AnyFunction;
 }
-
+export interface GenericModule {
+  [key: string]: DefaultTypes.AnyFunction;
+}
 export interface KeybindRecorderItemSettingUtil {
   value: boolean | string | unknown[];
   onChange: (newValue: boolean | string | unknown[]) => void;
