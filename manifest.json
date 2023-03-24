@@ -7,13 +7,13 @@
     "discordID": "1025214794766221384",
     "github": "Tharki-God"
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "updater": {
     "type": "github",
     "id": "Tharki-God/ReGameActivityToggle"
   },
   "license": "MIT",
   "type": "replugged-plugin",
-  "renderer": "src/index.tsx",
+  "renderer": "src/index.ts",
   "plaintextPatches": "src/plaintextPatches.ts"
 }
