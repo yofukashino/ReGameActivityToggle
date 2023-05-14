@@ -3,7 +3,7 @@ import { PluginLogger, SettingValues } from "../index";
 const { React } = common;
 import { defaultSettings } from "../lib/consts";
 const { SwitchItem, Category } = components;
-import { KeybindRecorderItem } from "./KeybindRecorderItem";
+import KeybindRecorderItem from "./KeybindRecorderItem";
 import * as Types from "../types";
 export const registerSettings = (): void => {
   for (const key in defaultSettings) {
@@ -25,11 +25,7 @@ export const Settings = (): Types.ReactElement => {
           {...{
             title: "Toggle by keybind:",
             note: "Keybind to toggle showing game activity.",
-            ...(util.useSetting(
-              SettingValues,
-              "keybind",
-              defaultSettings.keybind,
-            ) as Types.KeybindRecorderItemSettingUtil),
+            ...util.useSetting(SettingValues, "keybind", defaultSettings.keybind),
           }}
         />
         <SwitchItem

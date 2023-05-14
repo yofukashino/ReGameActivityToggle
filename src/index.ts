@@ -1,10 +1,10 @@
 import { Injector, Logger, common, components, settings } from "replugged";
-import { defaultSettings } from "./lib/consts";
+
 import "./style.css";
 import { registerSettings } from "./Components/Settings";
 export const PluginInjector = new Injector();
 export const PluginLogger = Logger.plugin("ReGameActivityToggle");
-export const SettingValues = await settings.init("Tharki.ReGameActivityToggle", defaultSettings);
+export const SettingValues = await settings.init("dev.tharki.ReGameActivityToggle");
 export const { toast: Toasts } = common;
 export const { ContextMenu } = components;
 export const CurrentlyPressed = new Map();

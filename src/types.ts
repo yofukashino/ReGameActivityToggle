@@ -1,7 +1,7 @@
 import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
 import { ReactElement } from "react";
-export { ReactElement, ComponentClass } from "react";
+export { ReactElement, ComponentClass, ReactNode } from "react";
 export interface UserSettingsActionTypes {
   AUTOMATED: number;
   DAILY: number;
@@ -62,10 +62,6 @@ export interface AccountDetails {
 export interface GenericModule {
   [key: string]: DefaultTypes.AnyFunction;
 }
-export interface KeybindRecorderItemSettingUtil {
-  value: boolean | string | unknown[];
-  onChange: (newValue: boolean | string | unknown[]) => void;
-}
 export interface CloseButtonProps {
   size?: string;
   className?: string;
@@ -76,8 +72,8 @@ export interface KeybindRecorderItemProps {
   note?: string;
   size?: string;
   className?: string;
-  value?: boolean | string | unknown[];
-  onChange?: (value: boolean | string | unknown[]) => void;
+  value?: unknown;
+  onChange?: (value: unknown) => void;
   disabled?: boolean;
   clearable?: boolean;
 }

@@ -1,10 +1,11 @@
-import { common, util } from "replugged";
-import { PluginInjector, SettingValues } from "../index";
-import { AccountDetailsClasses, SoundUtils } from "./requiredModules";
+import { Injector, common, util, webpack } from "replugged";
+import { SettingValues } from "../index";
+import { AccountDetails, AccountDetailsClasses, SoundUtils } from "./requiredModules";
 import { Sounds, defaultSettings } from "./consts";
 import * as UserSettingStore from "./UserSettingStore";
 import * as Types from "../types";
-const { React } = common;
+const PluginInjector = new Injector();
+const { React, fluxDispatcher: FluxDispatcher } = common;
 
 export const filterOutObjectKey = (object: object, keys: string[]): object =>
   Object.keys(object)
@@ -110,10 +111,42 @@ export const forceUpdate = (element: HTMLElement): void => {
   });
   toForceUpdate.forceUpdate(() => toForceUpdate.forceUpdate(() => {}));
 };
+export const forceLoadAndGetKeybindRecorder = async (): Promise<Types.ComponentClass> => {
+  const KeybindRecorder = webpack.getModule((m) =>
+    prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
+  ) as unknown as Types.ComponentClass;
+  if (KeybindRecorder) return KeybindRecorder;
+  const unpatchAfterLoad = PluginInjector.after(
+    AccountDetails.prototype,
+    "render",
+    (
+      _args,
+      res,
+      instance: {
+        handleOpenSettings: Types.DefaultTypes.AnyFunction;
+      },
+    ) => {
+      unpatchAfterLoad();
+      instance?.handleOpenSettings();
+      util
+        .sleep(0)
+        .then(() => {
+          FluxDispatcher.dispatch({ type: "LAYER_POP_ALL" });
+        })
+        .catch(() => {});
+      return res;
+    },
+  );
+  const AccountDetailsElement = await util.waitFor(`.container-YkUktl:not(.spotify-modal)`);
+  forceUpdate(AccountDetailsElement as HTMLElement);
+  return webpack.getModule((m) =>
+    prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
+  ) as unknown as Types.ComponentClass;
+};
 export const toggleGameActivity = (enabled: boolean): void => {
   if (SettingValues.get("playAudio", defaultSettings.playAudio))
     SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
   if (SettingValues.get("userPanel", defaultSettings.userPanel))
-    forceUpdate(document.querySelector(`.${AccountDetailsClasses.container}`));
+    forceUpdate(document.querySelector(`.${AccountDetailsClasses.container}:not(.spotify-modal)`));
 };

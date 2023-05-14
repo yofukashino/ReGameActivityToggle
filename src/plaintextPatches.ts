@@ -11,8 +11,8 @@ export default [
       {
         match:
           /(?=[^]*var [\w$]+,accountDetails;[\w$]+=accountDetails=function[^]*?hoveringOnMute:!1};)|([^]*)var ([\w$]+)=(function[^]*?hoveringOnMute:!1};)/,
-        replace: (_: string, prefix: string, varName: string, suffix: string) => {
-          if (!prefix || !varName || !suffix) return `${_}`;
+        replace: (entireOrig: string, prefix: string, varName: string, suffix: string) => {
+          if (!prefix || !varName || !suffix) return `${entireOrig}`;
           return `${prefix}var ${varName},accountDetails;${varName}=accountDetails=${suffix}`;
         },
       },
