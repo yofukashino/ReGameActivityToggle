@@ -9,6 +9,7 @@ The toggle options can be configured in the plugin settings.
 Download Link: [dev.tharki.ReGameActivityToggle.asar](https://github.com/Tharki-God/ReGameActivityToggle/releases/latest/download/dev.tharki.ReGameActivityToggle.asar)
 
 Install Link:
+
 [![Install in Replugged](https://img.shields.io/badge/-Install%20in%20Replugged-blue?style=for-the-badge&logo=none)](https://replugged.dev/install?identifier=Tharki-God/ReGameActivityToggle&source=github)
 
 ![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/togglegame.png)
