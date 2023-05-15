@@ -1,7 +1,5 @@
 ### ReGameActivityToggle
-```diff
-- WARNING: This adds some extra time on discord boot, please use with patience.
-```
+
 A game activity toggle option in either the status picker or the user panel or by keybind.
 
 The toggle options can be configured in the plugin settings.
