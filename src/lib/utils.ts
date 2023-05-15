@@ -1,11 +1,10 @@
-import { Injector, common, util, webpack } from "replugged";
-import { SettingValues } from "../index";
-import { AccountDetails, AccountDetailsClasses, SoundUtils } from "./requiredModules";
+import { common, util } from "replugged";
+import { PluginInjector, SettingValues } from "../index";
+import { AccountDetailsClasses, SoundUtils } from "./requiredModules";
 import { Sounds, defaultSettings } from "./consts";
 import * as UserSettingStore from "./UserSettingStore";
 import * as Types from "../types";
-const PluginInjector = new Injector();
-const { React, fluxDispatcher: FluxDispatcher } = common;
+const { React } = common;
 
 export const filterOutObjectKey = (object: object, keys: string[]): object =>
   Object.keys(object)
@@ -111,41 +110,7 @@ export const forceUpdate = (element: HTMLElement): void => {
   });
   toForceUpdate.forceUpdate(() => toForceUpdate.forceUpdate(() => {}));
 };
-export const forceLoadAndGetKeybindRecorder = async (): Promise<Types.ComponentClass> => {
-  const AccountDetailsElement = await util.waitFor(`.container-YkUktl:not(.spotify-modal)`);
-  const SettingLoader = new Promise((resolve, reject) => {
-    const unpatchAfterLoad = PluginInjector.after(
-      AccountDetails.prototype,
-      "render",
-      (
-        _args,
-        res,
-        instance: {
-          handleOpenSettings: Types.DefaultTypes.AnyFunction;
-        },
-      ) => {
-        unpatchAfterLoad();
-        instance?.handleOpenSettings();
-        util
-          .sleep(100)
-          .then(() => {
-            FluxDispatcher.dispatch({ type: "LAYER_POP_ALL" });
-            resolve(
-              webpack.getModule((m) =>
-                prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
-              ),
-            );
-          })
-          .catch((error) => {
-            reject(error);
-          });
-        return res;
-      },
-    );
-    forceUpdate(AccountDetailsElement as HTMLElement);
-  });
-  return (await SettingLoader) as Types.ComponentClass;
-};
+
 export const toggleGameActivity = (enabled: boolean): void => {
   if (SettingValues.get("playAudio", defaultSettings.playAudio))
     SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
