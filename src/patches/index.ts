@@ -1,6 +1,5 @@
-import { patchPanelButton } from "./AccountDetails";
 import { patchStatusPicker } from "./Menu";
+export { addPanelButton } from "./AccountDetails";
 export const applyInjections = (): void => {
-  patchPanelButton();
   patchStatusPicker();
 };

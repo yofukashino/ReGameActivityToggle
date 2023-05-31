@@ -56,9 +56,7 @@ export interface AccountDetailsClasses {
   withTagAsButton: string;
   withTagless: string;
 }
-export interface AccountDetails {
-  AccountDetails: DefaultTypes.AnyFunction;
-}
+
 export interface GenericModule {
   [key: string]: DefaultTypes.AnyFunction;
 }

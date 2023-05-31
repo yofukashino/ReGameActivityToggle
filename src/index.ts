@@ -21,4 +21,7 @@ export const stop = (): void => {
   PluginInjector.uninjectAll();
   removeListeners();
 };
+
+export { addPanelButton } from "./patches/AccountDetails";
+
 export { Settings } from "./Components/Settings.jsx";
