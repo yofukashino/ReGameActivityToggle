@@ -1,6 +1,5 @@
-import { webpack } from "replugged";
-import { ContextMenu, PluginInjector, SettingValues } from "../index";
-import { Menu, StatusPickerClasses } from "../lib/requiredModules";
+import { ContextMenu, PluginInjectorUtils, SettingValues } from "../index";
+import { StatusPickerClasses } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import * as UserSettingStore from "../lib/UserSettingStore";
 import * as Icons from "../Components/Icons";
@@ -8,13 +7,8 @@ import * as Utils from "../lib/utils";
 import * as Types from "../types";
 
 export const patchStatusPicker = (): void => {
-  const patchFunctionKey = webpack.getFunctionKeyBySource(Menu, ".navId") as string;
-  PluginInjector.before(Menu, patchFunctionKey, (args: Types.MenuArgs): Types.MenuArgs => {
-    if (
-      !SettingValues.get("statusPicker", defaultSettings.statusPicker) ||
-      args[0].navId !== "account"
-    )
-      return args;
+  PluginInjectorUtils.addMenuItem(Types.DefaultTypes.ContextMenuTypes.Account, (_data, menu) => {
+    if (!SettingValues.get("statusPicker", defaultSettings.statusPicker)) return;
     const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
     const Icon = Utils.addStyle(Icons.controller("16", "16"), {
       marginLeft: "-2px",
@@ -31,7 +25,7 @@ export const patchStatusPicker = (): void => {
         }}
       />,
     );
-    const [{ children }] = args;
+    const { children } = menu as { children: Types.ReactElement[] };
     const switchAccount = children.find((c) => c?.props?.children?.key === "switch-account");
     if (!children.find((c) => c?.props?.className === "tharki"))
       children.splice(
@@ -77,6 +71,5 @@ export const patchStatusPicker = (): void => {
           }}
         />,
       );
-    return args;
   });
 };

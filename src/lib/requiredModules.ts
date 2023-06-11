@@ -1,63 +1,46 @@
 import { webpack } from "replugged";
 import * as Types from "../types";
 
-export const WindowInfoStore = webpack.getByProps(
+export const WindowInfoStore = webpack.getByProps<Types.WindowInfoStore>(
   "isFocused",
   "isElementFullScreen",
   "addChangeListener",
   "removeChangeListener",
-) as Types.WindowInfoStore;
-
+);
+export const KeybindUtilsModule = webpack.getBySource<Types.GenericModule>("numpad plus");
 export const KeybindUtils = {
-  module: webpack.getBySource("numpad plus"),
-  get toCombo() {
-    return webpack.getFunctionBySource(this.module, "numpad plus");
-  },
-  get toEvent() {
-    return webpack.getFunctionBySource(this.module, /(?=.*keyCode)(?=.*BROWSER)/);
-  },
-};
-
+  toCombo: webpack.getFunctionBySource(KeybindUtilsModule, "numpad plus"),
+  toEvent: webpack.getFunctionBySource(KeybindUtilsModule, /(?=.*keyCode)(?=.*BROWSER)/),
+} as Types.KeybindUtils;
+export const SoundUtilsModule = webpack.getBySource<Types.GenericModule>(
+  /function.*\.disableSounds.*\.getSoundpack\(\).*play\(\).*return/,
+);
 export const SoundUtils = {
-  module: webpack.getBySource(/function.*\.disableSounds.*\.getSoundpack\(\).*play\(\).*return/),
-  get createSound() {
-    return webpack.getFunctionBySource(this.module, "return new");
-  },
-  get createSoundpackSound() {
-    return webpack.getFunctionBySource(this.module, ");return");
-  },
-  get playSound() {
-    return webpack.getFunctionBySource(this.module, "getSoundpack");
-  },
-};
+  createSound: webpack.getFunctionBySource(SoundUtilsModule, "return new"),
+  createSoundpackSound: webpack.getFunctionBySource(SoundUtilsModule, ");return"),
+  playSound: webpack.getFunctionBySource(SoundUtilsModule, "getSoundpack"),
+} as Types.SoundUtils;
 
-export const StatusPickerClasses = webpack.getByProps(
+export const StatusPickerClasses = webpack.getByProps<Types.StatusPickerClasses>(
   "status",
   "statusItem",
-) as unknown as Types.StatusPickerClasses;
+);
 
-export const Menu = webpack.getBySource(
-  "Menu API only allows Items and groups of Items as children",
-) as unknown as Types.GenericModule;
-
-export const UserSettingsProtoStore = webpack.getByProps(
+export const UserSettingsProtoStore = webpack.getByProps<Types.UserSettingsProtoStore>(
   "getGuildFolders",
   "getGuildRecentsDismissedAt",
   "settings",
 );
 
 export const UserSettingsProtoUtils = webpack.getBySource("UserSettingsProtoLastWriteTimes");
-export const UserSettingsActionTypes = webpack.getExportsForProps(UserSettingsProtoUtils, [
-  "SLOW_USER_ACTION",
-  "DAILY",
-  "INFREQUENT_USER_ACTION",
-]) as unknown as Types.UserSettingsActionTypes;
+export const UserSettingsActionTypes = webpack.getExportsForProps<Types.UserSettingsActionTypes>(
+  UserSettingsProtoUtils,
+  ["SLOW_USER_ACTION", "DAILY", "INFREQUENT_USER_ACTION"],
+);
 
-export const PanelButton = webpack.getBySource(
-  "Masks.PANEL_BUTTON",
-) as unknown as Types.ComponentClass;
+export const PanelButton = webpack.getBySource<Types.ComponentClass>("Masks.PANEL_BUTTON");
 
-export const AccountDetailsClasses = webpack.getByProps(
+export const AccountDetailsClasses = webpack.getByProps<Types.AccountDetailsClasses>(
   "godlike",
   "container",
-) as unknown as Types.AccountDetailsClasses;
+);

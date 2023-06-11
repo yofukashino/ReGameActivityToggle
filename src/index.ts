@@ -3,6 +3,7 @@ import { Injector, Logger, common, components, settings } from "replugged";
 import "./style.css";
 import { registerSettings } from "./Components/Settings";
 export const PluginInjector = new Injector();
+export const { utils: PluginInjectorUtils } = PluginInjector;
 export const PluginLogger = Logger.plugin("ReGameActivityToggle");
 export const SettingValues = await settings.init("dev.tharki.ReGameActivityToggle");
 export const { toast: Toasts } = common;

@@ -1,7 +1,8 @@
 import { types as DefaultTypes } from "replugged";
 export { types as DefaultTypes } from "replugged";
-import { ReactElement } from "react";
-export { ReactElement, ComponentClass, ReactNode } from "react";
+import type { ReactElement } from "react";
+export type { ReactElement, ComponentClass, ReactNode } from "react";
+export interface GenericModule extends Record<string, DefaultTypes.AnyFunction> {}
 export interface UserSettingsActionTypes {
   AUTOMATED: number;
   DAILY: number;
@@ -15,7 +16,19 @@ export interface WindowInfoStore {
   removeChangeListener: (callback: DefaultTypes.AnyFunction) => void;
   isElementFullScreen: () => boolean;
 }
-
+export interface UserSettingsProtoStore {
+  getDismissedGuildContent: DefaultTypes.AnyFunction;
+  getFullState: DefaultTypes.AnyFunction;
+  getGuildFolders: DefaultTypes.AnyFunction;
+  getGuildRecentsDismissedAt: DefaultTypes.AnyFunction;
+  getState: DefaultTypes.AnyFunction;
+  hasLoaded: DefaultTypes.AnyFunction;
+  initialize: DefaultTypes.AnyFunction;
+  constructor: DefaultTypes.AnyFunction;
+  frecencyWithoutFetchingLatest: object;
+  settings: object;
+  wasMostRecentUpdateFromServer: boolean;
+}
 export interface MenuArgs
   extends Array<{
     navId: string;
@@ -56,9 +69,14 @@ export interface AccountDetailsClasses {
   withTagAsButton: string;
   withTagless: string;
 }
-
-export interface GenericModule {
-  [key: string]: DefaultTypes.AnyFunction;
+export interface KeybindUtils {
+  toCombo: DefaultTypes.AnyFunction;
+  toEvent: DefaultTypes.AnyFunction;
+}
+export interface SoundUtils {
+  createSound: DefaultTypes.AnyFunction;
+  createSoundpackSound: DefaultTypes.AnyFunction;
+  playSound: DefaultTypes.AnyFunction;
 }
 export interface CloseButtonProps {
   size?: string;
