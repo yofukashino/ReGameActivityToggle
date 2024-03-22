@@ -3,7 +3,7 @@ import GameEnable from "../assets/ga_enable.mp3";
 import GameDisable from "../assets/ga_disable.mp3";
 import SpotifyEnable from "../assets/sp_enable.mp3";
 import SpotifyDisable from "../assets/sp_disable.mp3";
-import SpotifyToogle from "../assets/fd_toogle.mp3";
+import SpotifyToogle from "../assets/sp_toogle.mp3";
 export const defaultSettings = {
   spotify: true,
   statusPicker: true,
