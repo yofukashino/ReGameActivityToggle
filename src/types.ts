@@ -85,35 +85,13 @@ export namespace Types {
 
   export type KeybindEvents = KeybindEvent[];
 
-  export interface AccountDetailsClasses {
-    accountProfilePopoutWrapper: string;
-    avatar: string;
-    avatarWrapper: string;
-    buildOverrideButton: string;
-    canCopy: string;
-    container: string;
-    copySuccess: string;
-    customStatus: string;
-    emoji: string;
-    godlike: string;
-    hasBuildOverride: string;
-    nameTag: string;
-    panelSubtextContainer: string;
-    panelTitleContainer: string;
-    redIcon: string;
-    statusTooltip: string;
-    strikethrough: string;
-    usernameContainer: string;
-    withTagAsButton: string;
-    withTagless: string;
-  }
   export interface KeybindUtils {
     toCombo: DefaultTypes.AnyFunction;
-    toEvent: DefaultTypes.AnyFunction;
+    toBrowserEvents: DefaultTypes.AnyFunction;
   }
   export interface SoundUtils {
     createSound: DefaultTypes.AnyFunction;
-    createSoundpackSound: DefaultTypes.AnyFunction;
+    createSoundForPack: DefaultTypes.AnyFunction;
     playSound: DefaultTypes.AnyFunction;
   }
   export interface CloseButtonProps {
