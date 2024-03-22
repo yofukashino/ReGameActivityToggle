@@ -1,68 +1,55 @@
-import { common, components, webpack } from "replugged";
-import CloseButton from "./CloseButton";
-import * as Utils from "../lib/utils";
-import * as Types from "../types";
-const { React } = common;
-const { FormItem } = components;
+import { webpack } from "replugged";
+import { React } from "replugged/common";
+import { FormItem } from "replugged/components";
+import Icons from "./Icons";
+import Types from "../types";
 
 export default (props: Types.KeybindRecorderItemProps) => {
-  const KeybindRecorder = webpack.getModule((m) =>
-    Utils.prototypeChecker(m?.exports, ["handleComboChange", "cleanUp"]),
-  ) as unknown as Types.ComponentClass;
+  const KeybindRecorder = webpack.getBySource<
+    React.ComponentClass<{
+      disabled: boolean;
+      onChange: Types.DefaultTypes.AnyFunction;
+      defaultValue: number[][];
+    }>
+  >("handleComboChange");
   props.clearable = props.clearable ?? true;
-  const [value, setValue] = React.useState(props.value);
+  const [value, setValue] = React.useState<Array<Array<number>>>(props.value);
   const clear = () => {
     setValue([]);
     props.onChange([]);
   };
   return (
     <FormItem
-      {...{
-        title: props.title,
-        style: { marginBottom: 20 },
-        note: props.note,
-        notePosition: "after",
-        divider: true,
-      }}>
+      title={props.title}
+      style={{ marginBottom: 20 }}
+      note={props.note}
+      notePosition="after"
+      divider={true}>
       <div
-        {...{
-          style: {
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          },
+        className="keybindRecorder-container"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}>
-        <div
-          {...{
-            style: {
-              flexGrow: 1,
-            },
-          }}>
+        <div style={{ flexGrow: 1 }}>
           <KeybindRecorder
-            {...{
-              disabled: props.disabled,
-              defaultValue: value,
-              onChange: (value) => {
-                setValue(value);
-                props.onChange(value);
-              },
+            disabled={props.disabled}
+            defaultValue={value}
+            onChange={(newValue) => {
+              setValue(newValue);
+              props.onChange(newValue);
             }}
           />
         </div>
-        {props.clearable && (
+        {props.clearable && value.length > 0 && (
           <div
-            {...{
-              style: {
-                marginLeft: "5px",
-                color: "var(--interactive-normal)",
-                cursor: "pointer",
-              },
+            style={{
+              marginLeft: "5px",
+              color: "var(--interactive-normal)",
+              cursor: "pointer",
             }}>
-            <CloseButton
-              {...{
-                onClick: () => clear(),
-              }}
-            />
+            <Icons.close className="closeButton" onClick={clear} />
           </div>
         )}
       </div>

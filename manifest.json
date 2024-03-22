@@ -3,11 +3,11 @@
   "name": "ReGameActivityToggle",
   "description": "Toggle whether you want to show your game activity or not, without opening settings.",
   "image": "https://i.imgur.com/ADRoRPj.png",
-  "source": "https://github.com/Tharki-God/ReGameActivityToggle",
+  "source": "https://github.com/YofukashiNo/ReGameActivityToggle",
   "author": {
-    "name": "Ahlawat",
-    "discordID": "1025214794766221384",
-    "github": "Tharki-God"
+    "name": "Nanakusa",
+    "discordID": "1121961711080050780",
+    "github": "YofukashiNo"
   },
   "version": "1.1.3",
   "updater": {

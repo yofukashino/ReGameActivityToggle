@@ -1,120 +1,77 @@
-import { common, util } from "replugged";
+import { settings, util } from "replugged";
+import { React, lodash } from "replugged/common";
 import { PluginInjector, SettingValues } from "../index";
-import { AccountDetailsClasses, SoundUtils } from "./requiredModules";
+import { SoundUtils } from "./requiredModules";
 import { Sounds, defaultSettings } from "./consts";
-import * as UserSettingStore from "./UserSettingStore";
-import * as Types from "../types";
-const { React } = common;
-
-export const filterOutObjectKey = (object: object, keys: string[]): object =>
-  Object.keys(object)
-    .filter((key) => !keys.includes(key))
-    .reduce((obj, key) => {
-      obj[key] = object[key];
-      return obj;
-    }, {});
-
-export const findInTree = (
-  tree: object,
-  searchFilter: Types.DefaultTypes.AnyFunction,
-  searchOptions: { ignore?: string[]; walkable?: null | string[] },
-): unknown => {
-  const { walkable = null, ignore = [] } = searchOptions;
-  if (typeof searchFilter === "string") {
-    if (Object.hasOwnProperty.call(tree, searchFilter)) return tree[searchFilter];
-  } else if (searchFilter(tree)) {
-    return tree;
-  }
-  if (typeof tree !== "object" || tree == null) return;
-
-  let tempReturn: unknown;
-  if (Array.isArray(tree)) {
-    for (const value of tree) {
-      tempReturn = findInTree(value, searchFilter, { walkable, ignore });
-      if (typeof tempReturn !== "undefined") return tempReturn;
-    }
-  } else {
-    const toWalk = walkable == null ? Object.keys(tree) : walkable;
-    for (const key of toWalk) {
-      if (!Object.hasOwnProperty.call(tree, key) || ignore.includes(key)) continue;
-      tempReturn = findInTree(tree[key], searchFilter, { walkable, ignore });
-      if (typeof tempReturn !== "undefined") return tempReturn;
-    }
-  }
-  return tempReturn;
-};
-
-export const findInReactTree = (
-  tree: Types.ReactElement,
-  searchFilter: Types.DefaultTypes.AnyFunction,
-): unknown | Types.ReactElement => {
-  return findInTree(tree, searchFilter, { walkable: ["props", "children", "child", "sibling"] });
-};
-
-export const isObject = (testMaterial: unknown): boolean =>
-  typeof testMaterial === "object" && !Array.isArray(testMaterial) && testMaterial != null;
-
-export const hasProps = (mod: object, props: string[] | unknown[]): boolean =>
-  isObject(mod) && props.every((prop: string | unknown) => Object.hasOwnProperty.call(mod, prop));
-
-export const stringify = (component: Types.ReactElement): string =>
-  JSON.stringify(component, (_, symbol) =>
-    typeof symbol === "symbol" ? `$$Symbol:${Symbol.keyFor(symbol)}` : symbol,
-  );
-
-export const prase = (component: string): Types.ReactElement =>
-  JSON.parse(component, (_, symbol) => {
-    const matches = symbol?.match?.(/^\$\$Symbol:(.*)$/);
-    return matches ? Symbol.for(matches[1]) : symbol;
-  });
-export const deepCloneReactComponent = (component: Types.ReactElement): Types.ReactElement =>
-  prase(stringify(component));
-
-export const addStyle = (
-  component: Types.ReactElement,
-  style: object,
-): Types.ReactElement | undefined => {
-  if (!component || !style) return;
-  component = React.cloneElement(component);
-  component.props.style = component.props.style ? { ...component.props.style, ...style } : style;
-  return component;
-};
-
-export const addChilds = (
-  component: Types.ReactElement,
-  childrens: Types.ReactElement[] | Types.ReactElement,
-): Types.ReactElement | undefined => {
-  if (!component || !childrens) return;
-  component = React.cloneElement(component);
-  if (!Array.isArray(component.props.children))
-    component.props.children = [component.props.children];
-  if (Array.isArray(childrens)) component.props.children.push(...childrens);
-  else component.props.children.push(childrens);
-  return component;
-};
-
-export const prototypeChecker = (
-  ModuleExports: Types.DefaultTypes.ModuleExports,
-  Protos: string[],
-): boolean =>
-  isObject(ModuleExports) &&
-  Protos.every((p) =>
-    Object.values(ModuleExports).some((m) => (m as { prototype: () => void })?.prototype?.[p]),
-  );
-export const forceUpdate = (element: HTMLElement): void => {
+import UserSettingStore from "./UserSettingStore";
+import Types from "../types";
+export const forceRerenderElement = async (selector: string): Promise<void> => {
+  const element = await util.waitFor(selector);
   if (!element) return;
-  const toForceUpdate = util.getOwnerInstance(element);
-  const forceRerender = PluginInjector.instead(toForceUpdate, "render", () => {
-    forceRerender();
+  const ownerInstance = util.getOwnerInstance(element);
+  const unpatchRender = PluginInjector.instead(ownerInstance, "render", () => {
+    unpatchRender();
     return null;
   });
-  toForceUpdate.forceUpdate(() => toForceUpdate.forceUpdate(() => {}));
+  ownerInstance.forceUpdate(() => ownerInstance.forceUpdate(() => {}));
 };
 
 export const toggleGameActivity = (enabled: boolean): void => {
-  if (SettingValues.get("playAudio", defaultSettings.playAudio))
-    SoundUtils.playSound(enabled ? Sounds.Disable : Sounds.Enable, 0.5);
+  if (
+    (enabled && (SettingValues.get("playAudio", defaultSettings.playAudio).gameDisable ?? true)) ||
+    (!enabled && (SettingValues.get("playAudio", defaultSettings.playAudio).gameEnable ?? true))
+  ) {
+    SoundUtils.playSound(enabled ? Sounds.GameDisable : Sounds.GameEnable, 0.5);
+  }
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
-  if (SettingValues.get("userPanel", defaultSettings.userPanel))
-    forceUpdate(document.querySelector(`.${AccountDetailsClasses.container}:not(.spotify-modal)`));
 };
+
+export const useSetting = <
+  T extends Record<string, Types.Jsonifiable>,
+  D extends keyof T,
+  K extends Extract<keyof T, string>,
+  F extends Types.NestedType<T, P> | T[K] | undefined,
+  P extends `${K}.${string}` | K,
+>(
+  settings: settings.SettingsManager<T, D>,
+  key: P,
+  fallback?: F,
+): {
+  value: Types.NestedType<T, P> | F;
+  onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => void;
+} => {
+  const [initialKey, ...pathArray] = Object.keys(settings.all()).includes(key)
+    ? ([key] as [K])
+    : (key.split(".") as [K, ...string[]]);
+  const path = pathArray.join(".");
+  const initial = settings.get(initialKey, path.length ? ({} as T[K]) : (fallback as T[K]));
+  const [value, setValue] = React.useState<Types.NestedType<T, P>>(
+    path.length
+      ? (lodash.get(initial, path, fallback) as Types.NestedType<T, P>)
+      : (initial as Types.NestedType<T, P>),
+  );
+
+  return {
+    value,
+    onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => {
+      const isObj = newValue && typeof newValue === "object";
+      const value = isObj && "value" in newValue ? newValue.value : newValue;
+      const checked = isObj && "checked" in newValue ? newValue.checked : void 0;
+      const target =
+        isObj && "target" in newValue && newValue.target && typeof newValue.target === "object"
+          ? newValue.target
+          : void 0;
+      const targetValue = target && "value" in target ? target.value : void 0;
+      const targetChecked = target && "checked" in target ? target.checked : void 0;
+      const finalValue = checked ?? targetChecked ?? targetValue ?? value ?? newValue;
+
+      setValue(finalValue as Types.NestedType<T, P>);
+      settings.set(
+        initialKey,
+        path.length ? (lodash.set(initial, path, finalValue) as T[K]) : (finalValue as T[K]),
+      );
+    },
+  };
+};
+
+export default { ...util, forceRerenderElement, toggleGameActivity, useSetting };

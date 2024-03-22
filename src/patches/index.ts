@@ -1,5 +1,8 @@
-import { patchStatusPicker } from "./Menu";
-export { addPanelButton } from "./AccountDetails";
+import patchAccountContextMenu from "./AccountContextMenu";
+import patchAudioResolver from "./AudioResolver";
 export const applyInjections = (): void => {
-  patchStatusPicker();
+  patchAccountContextMenu();
+  void patchAudioResolver();
 };
+
+export default { applyInjections };

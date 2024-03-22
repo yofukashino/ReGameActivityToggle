@@ -1,12 +1,7 @@
 import { webpack } from "replugged";
-import * as Types from "../types";
+import Types from "../types";
 
-export const WindowInfoStore = webpack.getByProps<Types.WindowInfoStore>(
-  "isFocused",
-  "isElementFullScreen",
-  "addChangeListener",
-  "removeChangeListener",
-);
+export const WindowStore = webpack.getByStoreName<Types.WindowStore>("WindowStore");
 
 export const KeybindUtilsModule = webpack.getBySource<Types.GenericModule>("numpad plus");
 export const KeybindUtils = {
@@ -21,16 +16,8 @@ export const SoundUtils = {
   playSound: webpack.getFunctionBySource(SoundUtilsModule, "getSoundpack"),
 } as Types.SoundUtils;
 
-export const StatusPickerClasses = webpack.getByProps<Types.StatusPickerClasses>(
-  "status",
-  "statusItem",
-);
-
-export const UserSettingsProtoStore = webpack.getByProps<Types.UserSettingsProtoStore>(
-  "getGuildFolders",
-  "getGuildRecentsDismissedAt",
-  "settings",
-);
+export const UserSettingsProtoStore =
+  webpack.getByStoreName<Types.UserSettingsProtoStore>("UserSettingsProtoStore");
 
 export const UserSettingsProtoUtils = webpack.getBySource("UserSettingsProtoLastWriteTimes");
 export const UserSettingsActionTypes = webpack.getExportsForProps<Types.UserSettingsActionTypes>(
@@ -38,9 +25,20 @@ export const UserSettingsActionTypes = webpack.getExportsForProps<Types.UserSett
   ["SLOW_USER_ACTION", "DAILY", "INFREQUENT_USER_ACTION"],
 );
 
-export const PanelButton = webpack.getBySource<Types.ComponentClass>("Masks.PANEL_BUTTON");
-
+export const PanelButton = webpack.getBySource<Types.PanelButton>("Masks.PANEL_BUTTON");
 export const AccountDetailsClasses = webpack.getByProps<Types.AccountDetailsClasses>(
   "godlike",
   "container",
 );
+
+export const ConnectedAccountsStore =
+  webpack.getByStoreName<Types.ConnectedAccountsStore>("ConnectedAccountsStore");
+
+export const ConnectedAccountsUtils = webpack.getByProps<Types.ConnectedAccountsUtils>(
+  "setShowActivity",
+  "refreshAccessToken",
+);
+
+export const AudioResolverPromise = webpack.waitForModule<{
+  exports: Types.DefaultTypes.AnyFunction;
+}>(webpack.filters.bySource("./mute.mp3"), { raw: true });

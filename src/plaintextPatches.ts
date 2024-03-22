@@ -1,4 +1,4 @@
-import * as Types from "./types";
+import Types from "./types";
 
 export default [
   {
@@ -6,7 +6,7 @@ export default [
     replacements: [
       {
         match: /this\.renderNameZone\(\),\(0,.\.\w+\)\([\w_$]+\.\w+,{grow:0,children:\[/,
-        replace: `$&replugged.plugins.getExports("dev.tharki.ReGameActivityToggle")?.addPanelButton?.()??null,`,
+        replace: `$&replugged.plugins.getExports("dev.tharki.ReGameActivityToggle")?._addPanelButton?.()??null,`,
       },
     ],
   },

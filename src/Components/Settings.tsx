@@ -1,10 +1,11 @@
-import { common, components, util } from "replugged";
+import { common, components } from "replugged";
 import { PluginLogger, SettingValues } from "../index";
 const { React } = common;
 import { defaultSettings } from "../lib/consts";
 const { SwitchItem, Category } = components;
 import KeybindRecorderItem from "./KeybindRecorderItem";
-import * as Types from "../types";
+import Utils from "../lib/utils";
+import Types from "../types";
 export const registerSettings = (): void => {
   for (const key in defaultSettings) {
     if (SettingValues.has(key as keyof Types.Settings)) return;
@@ -12,51 +13,84 @@ export const registerSettings = (): void => {
     SettingValues.set(key as keyof Types.Settings, defaultSettings[key]);
   }
 };
-export const Settings = (): Types.ReactElement => {
+export const Settings = React.memo((): React.ReactElement => {
   return (
     <div>
+      <SwitchItem
+        note="Shows an option to toggle spotify status"
+        {...Utils.useSetting(SettingValues, "spotify", defaultSettings.spotify)}>
+        Spotify Toggle
+      </SwitchItem>
       <Category
-        {...{
-          title: "Toggle Options",
-          note: "Ways to toggle game activity status on current user.",
-          open: true,
-        }}>
+        title="Toggle Options"
+        note="Ways to toggle game activity status on current user."
+        open={true}>
         <KeybindRecorderItem
-          {...{
-            title: "Toggle by keybind:",
-            note: "Keybind to toggle showing game activity.",
-            ...util.useSetting(SettingValues, "keybind", defaultSettings.keybind),
-          }}
+          title="Toggle by keybind:"
+          note="Keybind to toggle showing game activity."
+          {...Utils.useSetting(SettingValues, "keybind", defaultSettings.keybind)}
         />
         <SwitchItem
-          {...{
-            note: "Show toasts on using keybind.",
-            ...util.useSetting(SettingValues, "showToast", defaultSettings.showToast),
-          }}>
+          note="Show toasts on using keybind."
+          {...Utils.useSetting(SettingValues, "showToast", defaultSettings.showToast)}>
           Show toasts
         </SwitchItem>
         <SwitchItem
-          {...{
-            note: "Add an option in the status picker to toggle showing your game activity.",
-            ...util.useSetting(SettingValues, "statusPicker", defaultSettings.statusPicker),
-          }}>
+          note="Add an option in the status picker to toggle showing your game activity."
+          {...Utils.useSetting(SettingValues, "statusPicker", defaultSettings.statusPicker)}>
           Status picker
         </SwitchItem>
         <SwitchItem
-          {...{
-            note: "Add a button in the user panel to toggle showing your game activity.",
-            ...util.useSetting(SettingValues, "userPanel", defaultSettings.userPanel),
-          }}>
+          note="Add a button in the user panel to toggle showing your game activity."
+          {...Utils.useSetting(SettingValues, "userPanel", defaultSettings.userPanel)}>
           User panel
         </SwitchItem>
-        <SwitchItem
-          {...{
-            note: "Play a sound upon using the keybind or clicking the button in the status picker or user panel.",
-            ...util.useSetting(SettingValues, "playAudio", defaultSettings.playAudio),
-          }}>
-          Play audio
-        </SwitchItem>
+        <Category
+          title="Play audio"
+          note="Play a sound upon using the keybind or clicking the button in the status picker or user panel."
+          open={true}>
+          <SwitchItem
+            {...Utils.useSetting(
+              SettingValues,
+              "playAudio.gameEnable",
+              defaultSettings.playAudio.gameEnable,
+            )}>
+            Game Activity Enable
+          </SwitchItem>
+          <SwitchItem
+            {...Utils.useSetting(
+              SettingValues,
+              "playAudio.gameDisable",
+              defaultSettings.playAudio.gameDisable,
+            )}>
+            Game Activity Disable
+          </SwitchItem>
+          <SwitchItem
+            {...Utils.useSetting(
+              SettingValues,
+              "playAudio.spotifyEnable",
+              defaultSettings.playAudio.spotifyEnable,
+            )}>
+            Spotify Activity Enable
+          </SwitchItem>
+          <SwitchItem
+            {...Utils.useSetting(
+              SettingValues,
+              "playAudio.spotifyDisable",
+              defaultSettings.playAudio.spotifyDisable,
+            )}>
+            Spotify Activity Disable
+          </SwitchItem>
+          <SwitchItem
+            {...Utils.useSetting(
+              SettingValues,
+              "playAudio.spotifyToogle",
+              defaultSettings.playAudio.spotifyToogle,
+            )}>
+            Spotify Activity Toogle All
+          </SwitchItem>
+        </Category>
       </Category>
     </div>
   );
-};
+});
