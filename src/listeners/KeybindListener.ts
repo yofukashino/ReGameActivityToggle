@@ -7,7 +7,7 @@ import Utils from "../lib/utils";
 import Types from "../types";
 const { toast: Toasts } = common;
 export default (e: Types.KeybindEvent): void => {
-  const keybindEvents = KeybindUtils.toEvent(
+  const keybindEvents = KeybindUtils.toBrowserEvents(
     SettingValues.get("keybind", defaultSettings.keybind),
   ) as Types.KeybindEvents;
   if (
