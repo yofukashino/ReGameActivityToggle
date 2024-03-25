@@ -30,5 +30,5 @@ export const ConnectedAccountsUtils = webpack.getByProps<Types.ConnectedAccounts
 );
 
 export const AudioResolverPromise = webpack.waitForModule<{
-  exports: Types.DefaultTypes.AnyFunction;
+  exports: Types.DefaultTypes.AnyFunction & { keys: () => string[] };
 }>(webpack.filters.bySource("./mute.mp3"), { raw: true });
