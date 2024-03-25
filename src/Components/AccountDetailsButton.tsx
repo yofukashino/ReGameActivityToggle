@@ -7,11 +7,8 @@ import UserSettingStore from "../lib/UserSettingStore";
 import Icons from "../Components/Icons";
 import SpotifyAccountsContextMenu from "./ContextMenu";
 import Utils from "../lib/utils";
-
-export const _addPanelButton = (): React.ReactElement | null => {
-  const [enabled, setEnabled] = React.useState(
-    UserSettingStore.getSetting("status", "showCurrentGame"),
-  );
+export const GameActivityPanelButton = (): React.ReactElement | null => {
+  const [enabled, setEnabled] = React.useState();
   React.useEffect(() => {
     setEnabled(UserSettingStore.getSetting("status", "showCurrentGame"));
   }, [UserSettingStore.getSetting("status", "showCurrentGame")]);
@@ -48,4 +45,7 @@ export const _addPanelButton = (): React.ReactElement | null => {
       }}
     />
   );
+};
+export const _addPanelButton = (): React.ReactElement | null => {
+  return <GameActivityPanelButton />;
 };
