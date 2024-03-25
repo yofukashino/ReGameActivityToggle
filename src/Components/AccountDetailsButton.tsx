@@ -9,17 +9,19 @@ import SpotifyAccountsContextMenu from "./ContextMenu";
 import Utils from "../lib/utils";
 
 export const _addPanelButton = (): React.ReactElement | null => {
-  if (
-    !SettingValues.get("userPanel", defaultSettings.userPanel) ||
-    plugins.getDisabled().includes("dev.tharki.ReGameActivityToggle")
-  )
-    return null;
   const [enabled, setEnabled] = React.useState(
     UserSettingStore.getSetting("status", "showCurrentGame"),
   );
   React.useEffect(() => {
     setEnabled(UserSettingStore.getSetting("status", "showCurrentGame"));
   }, [UserSettingStore.getSetting("status", "showCurrentGame")]);
+
+  if (
+    !SettingValues.get("userPanel", defaultSettings.userPanel) ||
+    plugins.getDisabled().includes("dev.tharki.ReGameActivityToggle")
+  )
+    return null;
+
   const Icon = <Icons.controller width="20" height="20" />;
   const DisabledIcon = (
     <Icons.controller width="20" height="20">

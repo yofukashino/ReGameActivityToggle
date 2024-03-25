@@ -1,7 +1,7 @@
 import { React } from "replugged/common";
 import { ContextMenu } from "replugged/components";
 import { SettingValues } from "..";
-import { defaultSettings, Sounds } from "../lib/consts";
+import { Sounds, defaultSettings } from "../lib/consts";
 import { ConnectedAccountsStore, ConnectedAccountsUtils, SoundUtils } from "../lib/requiredModules";
 import Icons from "./Icons";
 const { MenuCheckboxItem, ContextMenu: Menu, MenuSeparator, MenuItem } = ContextMenu;
@@ -31,10 +31,7 @@ export default (props) => {
               (a.showActivity &&
                 (SettingValues.get("playAudio", defaultSettings.playAudio).spotifyEnable ?? true)))
           ) {
-            SoundUtils.playSound(
-              a.showActivity ? Sounds.SpotifyEnable : Sounds.SpotifyDisable,
-              0.5,
-            );
+            SoundUtils.playSound(value ? Sounds.SpotifyEnable : Sounds.SpotifyDisable, 0.5);
           }
         }}
       />

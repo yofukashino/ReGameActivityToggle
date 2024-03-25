@@ -39,10 +39,7 @@ export default (): void => {
                     (SettingValues.get("playAudio", defaultSettings.playAudio).spotifyEnable ??
                       true)))
               ) {
-                SoundUtils.playSound(
-                  a.showActivity ? Sounds.SpotifyEnable : Sounds.SpotifyDisable,
-                  0.5,
-                );
+                SoundUtils.playSound(value ? Sounds.SpotifyEnable : Sounds.SpotifyDisable, 0.5);
               }
             }}
           />
