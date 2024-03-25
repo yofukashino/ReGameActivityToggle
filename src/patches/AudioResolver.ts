@@ -22,8 +22,8 @@ export default async (): Promise<void> => {
         return Sounds.SpotifyToogleURL;
       }
       default:
-        if (AudioResolver.keys().includes(sound)) {
-          return res();
+        if (AudioResolver.exports.keys().includes(sound)) {
+          return res(sound);
         }
     }
   });
