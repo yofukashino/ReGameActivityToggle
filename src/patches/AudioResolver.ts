@@ -4,7 +4,7 @@ import { Sounds } from "../lib/consts";
 
 export default async (): Promise<void> => {
   const AudioResolver = await AudioResolverPromise;
-  PluginInjector.instead(AudioResolver, "exports", ([sound]: [string]) => {
+  PluginInjector.instead(AudioResolver, "exports", ([sound]: [string], res) => {
     switch (sound) {
       case `./${Sounds.GameEnable}.mp3`: {
         return Sounds.GameEnableURL;
@@ -21,6 +21,10 @@ export default async (): Promise<void> => {
       case `./${Sounds.SpotifyToogle}.mp3`: {
         return Sounds.SpotifyToogleURL;
       }
+      default:
+        if (AudioResolver.keys().includes(sound)) {
+          return res();
+        }
     }
   });
 };
