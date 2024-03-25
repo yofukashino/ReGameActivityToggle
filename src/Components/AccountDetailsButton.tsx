@@ -8,7 +8,9 @@ import Icons from "../Components/Icons";
 import SpotifyAccountsContextMenu from "./ContextMenu";
 import Utils from "../lib/utils";
 export const GameActivityPanelButton = (): React.ReactElement | null => {
-  const [enabled, setEnabled] = React.useState();
+  const [enabled, setEnabled] = React.useState(
+    UserSettingStore.getSetting("status", "showCurrentGame"),
+  );
   React.useEffect(() => {
     setEnabled(UserSettingStore.getSetting("status", "showCurrentGame"));
   }, [UserSettingStore.getSetting("status", "showCurrentGame")]);
