@@ -1,20 +1,14 @@
 import { plugins } from "replugged";
 import { contextMenu as ContextMenuApi, React } from "replugged/common";
 import { SettingValues } from "../index";
-import { PanelButton } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import UserSettingStore from "../lib/UserSettingStore";
 import Icons from "../Components/Icons";
 import SpotifyAccountsContextMenu from "./ContextMenu";
 import Utils from "../lib/utils";
 export const GameActivityPanelButton = (): React.ReactElement | null => {
-  const [enabled, setEnabled] = React.useState(
-    UserSettingStore.getSetting("status", "showCurrentGame"),
-  );
-  React.useEffect(() => {
-    setEnabled(UserSettingStore.getSetting("status", "showCurrentGame"));
-  }, [UserSettingStore.getSetting("status", "showCurrentGame")]);
-
+  const enabled = UserSettingStore.useSetting("status", "showCurrentGame");
   if (
     !SettingValues.get("userPanel", defaultSettings.userPanel) ||
     plugins.getDisabled().includes("dev.tharki.ReGameActivityToggle")
@@ -34,7 +28,7 @@ export const GameActivityPanelButton = (): React.ReactElement | null => {
   );
 
   return (
-    <PanelButton
+    <Modules.PanelButton
       onContextMenu={(event) =>
         ContextMenuApi.open(event, (props) => (
           <SpotifyAccountsContextMenu {...props} onClose={ContextMenuApi.close} />
@@ -48,6 +42,4 @@ export const GameActivityPanelButton = (): React.ReactElement | null => {
     />
   );
 };
-export const _addPanelButton = (): React.ReactElement | null => {
-  return <GameActivityPanelButton />;
-};
+export default () => (Modules.PanelButton ? <GameActivityPanelButton /> : <></>);

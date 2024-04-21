@@ -9,13 +9,73 @@ export namespace Types {
   export type UtilTree = util.Tree;
   export type ReactTree = util.Tree & React.ReactElement;
   export type GenericModule = Record<string, DefaultTypes.AnyFunction>;
-
-  export interface UserSettingsActionTypes {
-    AUTOMATED: number;
-    DAILY: number;
-    FREQUENT_USER_ACTION: number;
-    INFREQUENT_USER_ACTION: number;
-    SLOW_USER_ACTION: number;
+  export interface AudioResolver {
+    exports: Types.DefaultTypes.AnyFunction & { keys: () => string[] };
+  }
+  export enum UserSettingsDelay {
+    AUTOMATED = 30,
+    DAILY = 86400,
+    FREQUENT_USER_ACTION = 10,
+    INFREQUENT_USER_ACTION = 0,
+    SLOW_USER_ACTION = 20,
+  }
+  export interface SettingsActionCreators {
+    ProtoClass: {
+      defaultCheckDepth: number;
+      fields: unknown[];
+      optionsobject;
+      typeName: string;
+      binaryReadMap1: DefaultTypes.AnyFunction;
+      create: DefaultTypes.AnyFunction;
+      internalBinaryRead: DefaultTypes.AnyFunction;
+      internalBinaryWrite: DefaultTypes.AnyFunction;
+    };
+    beforeSendCallbacks: Array<{
+      hasChanges: () => boolean;
+      processProto: () => void;
+    }>;
+    lastSendTime: number;
+    logger: {
+      error: DefaultTypes.AnyFunction;
+      fileOnly: DefaultTypes.AnyFunction;
+      info: DefaultTypes.AnyFunction;
+      log: DefaultTypes.AnyFunction;
+      logDangerously: DefaultTypes.AnyFunction;
+      name: string;
+      time: DefaultTypes.AnyFunction;
+      trace: DefaultTypes.AnyFunction;
+      verbose: DefaultTypes.AnyFunction;
+      verboseDangerously: DefaultTypes.AnyFunction;
+      warn: DefaultTypes.AnyFunction;
+    };
+    persistChanges: DefaultTypes.AnyFunction;
+    type: number;
+    dispatchChanges: DefaultTypes.AnyFunction;
+    getCurrentValue: DefaultTypes.AnyFunction;
+    getEditInfo: DefaultTypes.AnyFunction;
+    loadIfNecessary: DefaultTypes.AnyFunction;
+    markDirty: DefaultTypes.AnyFunction;
+    markDirtyFromMigration: DefaultTypes.AnyFunction;
+    markDirtyIfHasPendingChange: DefaultTypes.AnyFunction;
+    saveLastSendTime: DefaultTypes.AnyFunction;
+    scheduleSaveFromOfflineEdit: DefaultTypes.AnyFunction;
+    updateAsync: (
+      category: string,
+      setter: Types.DefaultTypes.AnyFunction,
+      type: string | number,
+    ) => void;
+  }
+  export interface UserSettingsActionUtils {
+    FrecencyUserSettingsActionCreators: SettingsActionCreators;
+    PreloadedUserSettingsActionCreators: SettingsActionCreators;
+    UserSettingsActionCreatorsByType: Record<number, SettingsActionCreators>;
+    UserSettingsDelay: typeof UserSettingsDelay;
+    addDismissedContent: DefaultTypes.AnyFunction;
+    checkAllDismissedContents: DefaultTypes.AnyFunction;
+    clearDismissedContents: DefaultTypes.AnyFunction;
+    removeDismissedContent: DefaultTypes.AnyFunction;
+    updateUserChannelSettings: DefaultTypes.AnyFunction;
+    updateUserGuildSettings: DefaultTypes.AnyFunction;
   }
   export interface WindowStore extends Store {
     isFocused: () => boolean;
@@ -44,7 +104,12 @@ export namespace Types {
   }
   export interface ConnectedAccountsStore extends Store {
     getAccount: DefaultTypes.AnyFunction;
-    getAccounts: DefaultTypes.AnyFunction;
+    getAccounts: () => Array<{
+      type: string;
+      id: string;
+      name: string;
+      showActivity: boolean;
+    }>;
     getLocalAccount: DefaultTypes.AnyFunction;
     getLocalAccounts: DefaultTypes.AnyFunction;
     isFetching: DefaultTypes.AnyFunction;
@@ -109,7 +174,18 @@ export namespace Types {
     disabled?: boolean;
     clearable?: boolean;
   }
-
+  export interface Modules {
+    loadModules?: () => Promise<void>;
+    WindowStore?: WindowStore;
+    SoundUtils?: SoundUtils;
+    KeybindUtils?: KeybindUtils;
+    UserSettingsProtoStore?: UserSettingsProtoStore;
+    UserSettingsActionUtils?: UserSettingsActionUtils;
+    PanelButton?: PanelButton;
+    ConnectedAccountsStore?: ConnectedAccountsStore;
+    ConnectedAccountsUtils?: ConnectedAccountsUtils;
+    AudioResolverPromise?: Promise<AudioResolver>;
+  }
   export type Jsonifiable =
     | null
     | undefined
@@ -123,7 +199,10 @@ export namespace Types {
     | React.ChangeEvent<HTMLInputElement>
     | (Record<string, unknown> & { value?: T; checked?: T });
 
-  export type NestedType<T, P> = P extends `${infer Left}.${infer Right}`
+  export type NestedType<T, P> = P extends
+    | `${infer Left}.${infer Right}`
+    | `${infer Left}/${infer Right}`
+    | `${infer Left}-${infer Right}`
     ? Left extends keyof T
       ? NestedType<T[Left], Right>
       : Left extends `${infer FieldKey}[${infer IndexKey}]`
@@ -133,7 +212,7 @@ export namespace Types {
       : undefined
     : P extends keyof T
     ? T[P]
-    : P extends `${infer FieldKey}`
+    : P extends `${infer FieldKey}[${infer _IndexKey}]`
     ? FieldKey extends keyof T
       ? Exclude<T[FieldKey], undefined> extends infer U
         ? U

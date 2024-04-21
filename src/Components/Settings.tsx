@@ -1,8 +1,7 @@
-import { common, components } from "replugged";
+import { React } from "replugged/common";
+import { Category, SwitchItem } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
-const { React } = common;
 import { defaultSettings } from "../lib/consts";
-const { SwitchItem, Category } = components;
 import KeybindRecorderItem from "./KeybindRecorderItem";
 import Utils from "../lib/utils";
 import Types from "../types";
@@ -94,3 +93,5 @@ export const Settings = React.memo((): React.ReactElement => {
     </div>
   );
 });
+
+export default { registerSettings, Settings };

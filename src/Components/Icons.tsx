@@ -1,4 +1,3 @@
-import Types from "../types";
 export const controller = ({
   children,
   ...props

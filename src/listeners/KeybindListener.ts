@@ -1,13 +1,12 @@
-import { common } from "replugged";
+import { toast as Toasts } from "replugged/common";
 import { CurrentlyPressed, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import { KeybindUtils } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import UserSettingStore from "../lib/UserSettingStore";
 import Utils from "../lib/utils";
 import Types from "../types";
-const { toast: Toasts } = common;
 export default (e: Types.KeybindEvent): void => {
-  const keybindEvents = KeybindUtils.toBrowserEvents(
+  const keybindEvents = Modules.KeybindUtils.toBrowserEvents(
     SettingValues.get("keybind", defaultSettings.keybind),
   ) as Types.KeybindEvents;
   if (

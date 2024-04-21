@@ -1,5 +1,5 @@
 import { CurrentlyPressed } from "../index";
-import { WindowStore } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 export default (): void => {
-  if (WindowStore.isFocused()) CurrentlyPressed.clear();
+  if (Modules.WindowStore?.isFocused()) CurrentlyPressed.clear();
 };

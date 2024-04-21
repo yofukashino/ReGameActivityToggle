@@ -1,7 +1,7 @@
 import { settings, util } from "replugged";
 import { React, lodash } from "replugged/common";
-import { PluginInjector, SettingValues } from "../index";
-import { SoundUtils } from "./requiredModules";
+import { PluginInjector, PluginLogger, SettingValues } from "../index";
+import Modules from "./requiredModules";
 import { Sounds, defaultSettings } from "./consts";
 import UserSettingStore from "./UserSettingStore";
 import Types from "../types";
@@ -21,9 +21,50 @@ export const toggleGameActivity = (enabled: boolean): void => {
     (enabled && (SettingValues.get("playAudio", defaultSettings.playAudio).gameDisable ?? true)) ||
     (!enabled && (SettingValues.get("playAudio", defaultSettings.playAudio).gameEnable ?? true))
   ) {
-    SoundUtils.playSound(enabled ? Sounds.GameDisable : Sounds.GameEnable, 0.5);
+    Modules.SoundUtils.playSound(enabled ? Sounds.GameDisable : Sounds.GameEnable, 0.5);
   }
+  PluginLogger.log(`${enabled ? "Disabled" : "Enabled"} Game Activity`);
   UserSettingStore.setSetting("status", "showCurrentGame", !enabled);
+};
+
+export const toggleSpotifyActivity = (account?: {
+  type: string;
+  id: string;
+  name: string;
+  showActivity: boolean;
+}): void => {
+  const { ConnectedAccountsStore, ConnectedAccountsUtils, SoundUtils } = Modules;
+  const accounts = account
+    ? [account]
+    : ConnectedAccountsStore.getAccounts().filter((a) => a.type === "spotify");
+  for (const a of accounts) {
+    a.showActivity = !a.showActivity;
+    ConnectedAccountsUtils.setShowActivity("spotify", a.id, a.showActivity);
+  }
+  if (
+    account
+      ? (!account.showActivity &&
+          (SettingValues.get("playAudio", defaultSettings.playAudio).spotifyDisable ?? true)) ||
+        (account.showActivity &&
+          (SettingValues.get("playAudio", defaultSettings.playAudio).spotifyEnable ?? true))
+      : SettingValues.get("playAudio", defaultSettings.playAudio).spotifyToogle ?? true
+  ) {
+    SoundUtils.playSound(
+      account
+        ? account.showActivity
+          ? Sounds.SpotifyEnable
+          : Sounds.SpotifyDisable
+        : Sounds.SpotifyToogle,
+      0.5,
+    );
+  }
+  PluginLogger.log(
+    account
+      ? account.showActivity
+        ? `Enabled Spotify Song Activity for ${account.name}`
+        : `Disabled Spotify Song Activity for ${account.name}`
+      : `Toogled Spotify Song Activity for ${accounts.map((a) => a.name).join(", ")}`,
+  );
 };
 
 export const useSetting = <
@@ -31,29 +72,28 @@ export const useSetting = <
   D extends keyof T,
   K extends Extract<keyof T, string>,
   F extends Types.NestedType<T, P> | T[K] | undefined,
-  P extends `${K}.${string}` | K,
+  P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}` | K,
+  V extends P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}`
+    ? NonNullable<Types.NestedType<T, P>>
+    : P extends D
+    ? NonNullable<T[P]>
+    : F extends null | undefined
+    ? T[P] | undefined
+    : NonNullable<T[P]> | F,
 >(
   settings: settings.SettingsManager<T, D>,
   key: P,
   fallback?: F,
 ): {
-  value: Types.NestedType<T, P> | F;
-  onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => void;
+  value: V;
+  onChange: (newValue: Types.ValType<Types.NestedType<T, P>> | Types.ValType<T[K]>) => void;
 } => {
-  const [initialKey, ...pathArray] = Object.keys(settings.all()).includes(key)
-    ? ([key] as [K])
-    : (key.split(".") as [K, ...string[]]);
-  const path = pathArray.join(".");
-  const initial = settings.get(initialKey, path.length ? ({} as T[K]) : (fallback as T[K]));
-  const [value, setValue] = React.useState<Types.NestedType<T, P>>(
-    path.length
-      ? (lodash.get(initial, path, fallback) as Types.NestedType<T, P>)
-      : (initial as Types.NestedType<T, P>),
-  );
+  const initial = settings.get(key as K) ?? lodash.get(settings.all(), key) ?? fallback;
+  const [value, setValue] = React.useState(initial as V);
 
   return {
     value,
-    onChange: (newValue: Types.ValType<Types.NestedType<T, P> | F>) => {
+    onChange: (newValue: Types.ValType<Types.NestedType<T, P>> | Types.ValType<T[K]>) => {
       const isObj = newValue && typeof newValue === "object";
       const value = isObj && "value" in newValue ? newValue.value : newValue;
       const checked = isObj && "checked" in newValue ? newValue.checked : void 0;
@@ -63,15 +103,49 @@ export const useSetting = <
           : void 0;
       const targetValue = target && "value" in target ? target.value : void 0;
       const targetChecked = target && "checked" in target ? target.checked : void 0;
-      const finalValue = checked ?? targetChecked ?? targetValue ?? value ?? newValue;
+      const finalValue = (checked ?? targetChecked ?? targetValue ?? value ?? newValue) as T[K];
 
-      setValue(finalValue as Types.NestedType<T, P>);
-      settings.set(
-        initialKey,
-        path.length ? (lodash.set(initial, path, finalValue) as T[K]) : (finalValue as T[K]),
-      );
+      setValue(finalValue as V);
+
+      if (settings.get(key as K)) {
+        settings.set(key as K, finalValue);
+      } else {
+        const [rootKey] = key.split(/[-/.]/);
+        const setting = lodash.set(settings.all(), key, finalValue)[rootKey as K];
+        settings.set(rootKey as K, setting);
+      }
     },
   };
 };
 
-export default { ...util, forceRerenderElement, toggleGameActivity, useSetting };
+export const useSettingArray = <
+  T extends Record<string, Types.Jsonifiable>,
+  D extends keyof T,
+  K extends Extract<keyof T, string>,
+  F extends Types.NestedType<T, P> | T[K] | undefined,
+  P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}` | K,
+  V extends P extends `${K}.${string}` | `${K}/${string}` | `${K}-${string}`
+    ? NonNullable<Types.NestedType<T, P>>
+    : P extends D
+    ? NonNullable<T[P]>
+    : F extends null | undefined
+    ? T[P] | undefined
+    : NonNullable<T[P]> | F,
+>(
+  settings: settings.SettingsManager<T, D>,
+  key: P,
+  fallback?: F,
+): [V, (newValue: Types.ValType<Types.NestedType<T, P>> | Types.ValType<T[K]>) => void] => {
+  const { value, onChange } = useSetting(settings, key, fallback);
+
+  return [value as V, onChange];
+};
+
+export default {
+  ...util,
+  forceRerenderElement,
+  toggleGameActivity,
+  toggleSpotifyActivity,
+  useSetting,
+  useSettingArray,
+};

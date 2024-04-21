@@ -1,34 +1,34 @@
 import { webpack } from "replugged";
 import Types from "../types";
 
-export const WindowStore = webpack.getByStoreName<Types.WindowStore>("WindowStore");
+export const Modules: Types.Modules = {};
 
-export const SoundUtils = webpack.getByProps<Types.SoundUtils>(
-  "playSound",
-  "createSound",
-  "createSoundForPack",
-);
-export const KeybindUtils = webpack.getByProps<Types.KeybindUtils>("toCombo");
+Modules.loadModules = async (): Promise<void> => {
+  Modules.SoundUtils ??= await webpack.waitForProps<Types.SoundUtils>(
+    "playSound",
+    "createSound",
+    "createSoundForPack",
+  );
+  Modules.KeybindUtils ??= await webpack.waitForProps<Types.KeybindUtils>("toCombo");
+  Modules.UserSettingsActionUtils ??= await webpack.waitForProps<Types.UserSettingsActionUtils>(
+    "PreloadedUserSettingsActionCreators",
+  );
+  Modules.PanelButton = await webpack.waitForModule<Types.PanelButton>(
+    webpack.filters.bySource("Masks.PANEL_BUTTON"),
+  );
+  Modules.ConnectedAccountsUtils ??= await webpack.waitForProps<Types.ConnectedAccountsUtils>(
+    "setShowActivity",
+    "refreshAccessToken",
+  );
+  Modules.AudioResolverPromise = webpack.waitForModule<Types.AudioResolver>(
+    webpack.filters.bySource("./mute.mp3"),
+    { raw: true },
+  );
+  Modules.UserSettingsProtoStore ??=
+    webpack.getByStoreName<Types.UserSettingsProtoStore>("UserSettingsProtoStore");
+  Modules.WindowStore ??= webpack.getByStoreName<Types.WindowStore>("WindowStore");
+  Modules.ConnectedAccountsStore ??=
+    webpack.getByStoreName<Types.ConnectedAccountsStore>("ConnectedAccountsStore");
+};
 
-export const UserSettingsProtoStore =
-  webpack.getByStoreName<Types.UserSettingsProtoStore>("UserSettingsProtoStore");
-
-export const UserSettingsProtoUtils = webpack.getBySource("UserSettingsProtoLastWriteTimes");
-export const UserSettingsActionTypes = webpack.getExportsForProps<Types.UserSettingsActionTypes>(
-  UserSettingsProtoUtils,
-  ["SLOW_USER_ACTION", "DAILY", "INFREQUENT_USER_ACTION"],
-);
-
-export const PanelButton = webpack.getBySource<Types.PanelButton>("Masks.PANEL_BUTTON");
-
-export const ConnectedAccountsStore =
-  webpack.getByStoreName<Types.ConnectedAccountsStore>("ConnectedAccountsStore");
-
-export const ConnectedAccountsUtils = webpack.getByProps<Types.ConnectedAccountsUtils>(
-  "setShowActivity",
-  "refreshAccessToken",
-);
-
-export const AudioResolverPromise = webpack.waitForModule<{
-  exports: Types.DefaultTypes.AnyFunction & { keys: () => string[] };
-}>(webpack.filters.bySource("./mute.mp3"), { raw: true });
+export default Modules;

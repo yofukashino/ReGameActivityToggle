@@ -1,18 +1,22 @@
 import { Injector, Logger, settings } from "replugged";
+import { defaultSettings } from "./lib/consts";
 import "./style.css";
-import { registerSettings } from "./Components/Settings";
 export const PluginInjector = new Injector();
 export const { utils: PluginInjectorUtils } = PluginInjector;
 export const PluginLogger = Logger.plugin("ReGameActivityToggle");
-export const SettingValues = await settings.init("dev.tharki.ReGameActivityToggle");
+export const SettingValues = await settings.init(
+  "dev.tharki.ReGameActivityToggle",
+  defaultSettings,
+);
 export const CurrentlyPressed = new Map();
-import Injections from "./patches/index";
+import Settings from "./Components/Settings";
+import Injections from "./injections/index";
 import Listeners from "./listeners/index";
 
 export const start = (): void => {
-  registerSettings();
-  Injections.applyInjections();
-  Listeners.addListeners();
+  Settings.registerSettings();
+  void Injections.applyInjections();
+  void Listeners.addListeners();
 };
 
 export const stop = (): void => {
@@ -20,6 +24,6 @@ export const stop = (): void => {
   Listeners.removeListeners();
 };
 
-export { _addPanelButton } from "./Components/AccountDetailsButton";
+export { default as _addPanelButton } from "./Components/AccountDetailsButton";
 
 export { Settings } from "./Components/Settings.jsx";

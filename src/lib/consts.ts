@@ -1,4 +1,4 @@
-import { KeybindUtils } from "./requiredModules";
+import Modules from "./requiredModules";
 import GameEnable from "../assets/ga_enable.mp3";
 import GameDisable from "../assets/ga_disable.mp3";
 import SpotifyEnable from "../assets/sp_enable.mp3";
@@ -9,7 +9,9 @@ export const defaultSettings = {
   statusPicker: true,
   userPanel: true,
   showToast: true,
-  keybind: KeybindUtils.toCombo("ctrl+shift+g") as number[][],
+  get keybind() {
+    return Modules.KeybindUtils.toCombo("ctrl+shift+g") as number[][];
+  },
   playAudio: {
     gameDisable: true,
     gameEnable: true,

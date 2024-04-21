@@ -1,42 +1,18 @@
-import { React } from "replugged/common";
+import { flux as Flux, React } from "replugged/common";
 import { ContextMenu } from "replugged/components";
-import { SettingValues } from "..";
-import { Sounds, defaultSettings } from "../lib/consts";
-import { ConnectedAccountsStore, ConnectedAccountsUtils, SoundUtils } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import Icons from "./Icons";
+import Utils from "../lib/utils";
 const { MenuCheckboxItem, ContextMenu: Menu, MenuSeparator, MenuItem } = ContextMenu;
 
 export default (props) => {
-  const ConnectedAccounts = ConnectedAccountsStore.getAccounts() as Array<{
-    type: string;
-    id: string;
-    name: string;
-    showActivity: boolean;
-  }>;
-  const SpotifyAccounts = ConnectedAccounts.filter((a) => a.type === "spotify").map((a) => {
-    const [value, onChange] = React.useState(a.showActivity);
-    return (
-      <MenuCheckboxItem
-        id={a.id}
-        label={a.name}
-        checked={value}
-        action={(e) => {
-          onChange((prev) => !prev);
-          a.showActivity = !a.showActivity;
-          ConnectedAccountsUtils.setShowActivity("spotify", a.id, a.showActivity);
-          if (
-            e &&
-            ((!a.showActivity &&
-              (SettingValues.get("playAudio", defaultSettings.playAudio).spotifyDisable ?? true)) ||
-              (a.showActivity &&
-                (SettingValues.get("playAudio", defaultSettings.playAudio).spotifyEnable ?? true)))
-          ) {
-            SoundUtils.playSound(value ? Sounds.SpotifyEnable : Sounds.SpotifyDisable, 0.5);
-          }
-        }}
-      />
-    );
+  const { SpotifyAccounts } = Flux.useStateFromStores([Modules.ConnectedAccountsStore], () => {
+    const ConnectedAccounts = Modules.ConnectedAccountsStore.getAccounts();
+    return {
+      SpotifyAccounts: ConnectedAccounts.filter((a) => a.type === "spotify"),
+    };
   });
+
   return (
     <Menu {...props} navId="yofukashino">
       <MenuItem
@@ -45,19 +21,24 @@ export default (props) => {
         id="spotify-accounts"
         showIconFirst={true}
         icon={() => <Icons.music height="16" width="16" />}
-        action={() => {
-          for (const {
-            props: { action },
-          } of SpotifyAccounts)
-            action(false);
-          if (SettingValues.get("playAudio", defaultSettings.playAudio).spotifyToogle ?? true) {
-            SoundUtils.playSound(Sounds.SpotifyToogle, 0.5);
-          }
-        }}
+        action={() => Utils.toggleSpotifyActivity()}
       />
       <MenuSeparator />
       {SpotifyAccounts.length ? (
-        SpotifyAccounts
+        SpotifyAccounts.map((a) => {
+          const [value, onChange] = React.useState(a.showActivity);
+          return (
+            <MenuCheckboxItem
+              id={a.id}
+              label={a.name}
+              checked={value}
+              action={() => {
+                onChange((prev) => !prev);
+                Utils.toggleSpotifyActivity(a);
+              }}
+            />
+          );
+        })
       ) : (
         <MenuItem
           label="No Accounts"
