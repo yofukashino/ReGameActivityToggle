@@ -3,7 +3,6 @@
   flex: 1 1 min-content !important;
 }
 
-
 .keybindRecorder-container:not(:hover) .closeButton {
   display: none;
 }
