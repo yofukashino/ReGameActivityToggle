@@ -3,7 +3,7 @@ import { defaultSettings } from "./lib/consts";
 import "./style.css";
 export const PluginInjector = new Injector();
 export const { utils: PluginInjectorUtils } = PluginInjector;
-export const PluginLogger = Logger.plugin("ReGameActivityToggle");
+export const PluginLogger = Logger.plugin("ReGameActivityToggle", "#b380ff");
 export const SettingValues = await settings.init(
   "dev.tharki.ReGameActivityToggle",
   defaultSettings,
@@ -15,7 +15,7 @@ import Listeners from "./listeners/index";
 
 export const start = (): void => {
   Settings.registerSettings();
-  void Injections.applyInjections();
+  void Injections.applyInjections().catch((err) => PluginLogger.error(err));
   void Listeners.addListeners();
 };
 

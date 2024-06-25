@@ -66,16 +66,16 @@ export namespace Types {
     ) => void;
   }
   export interface UserSettingsActionUtils {
-    FrecencyUserSettingsActionCreators: SettingsActionCreators;
+    FrecencyUserSettingsActionCreators?: SettingsActionCreators;
     PreloadedUserSettingsActionCreators: SettingsActionCreators;
-    UserSettingsActionCreatorsByType: Record<number, SettingsActionCreators>;
+    UserSettingsActionCreatorsByType?: Record<number, SettingsActionCreators>;
     UserSettingsDelay: typeof UserSettingsDelay;
-    addDismissedContent: DefaultTypes.AnyFunction;
-    checkAllDismissedContents: DefaultTypes.AnyFunction;
-    clearDismissedContents: DefaultTypes.AnyFunction;
-    removeDismissedContent: DefaultTypes.AnyFunction;
-    updateUserChannelSettings: DefaultTypes.AnyFunction;
-    updateUserGuildSettings: DefaultTypes.AnyFunction;
+    addDismissedContent?: DefaultTypes.AnyFunction;
+    checkAllDismissedContents?: DefaultTypes.AnyFunction;
+    clearDismissedContents?: DefaultTypes.AnyFunction;
+    removeDismissedContent?: DefaultTypes.AnyFunction;
+    updateUserChannelSettings?: DefaultTypes.AnyFunction;
+    updateUserGuildSettings?: DefaultTypes.AnyFunction;
   }
   export interface WindowStore extends Store {
     isFocused: () => boolean;
@@ -177,9 +177,12 @@ export namespace Types {
   export interface Modules {
     loadModules?: () => Promise<void>;
     WindowStore?: WindowStore;
+    SoundUtilsModule?: GenericModule;
     SoundUtils?: SoundUtils;
+    KeybindUtilsModule?: GenericModule;
     KeybindUtils?: KeybindUtils;
     UserSettingsProtoStore?: UserSettingsProtoStore;
+    UserSettingsActionUtilsModule?: Record<string, Types.SettingsActionCreators>;
     UserSettingsActionUtils?: UserSettingsActionUtils;
     PanelButton?: PanelButton;
     ConnectedAccountsStore?: ConnectedAccountsStore;

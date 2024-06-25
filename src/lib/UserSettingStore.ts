@@ -1,4 +1,4 @@
-import { flux as Flux } from "replugged/common";
+import { fluxHooks as FluxHooks } from "replugged/common";
 import Modules from "./requiredModules";
 export const getSetting = (category: string, key: string): boolean => {
   if (!category || !key) return;
@@ -6,7 +6,7 @@ export const getSetting = (category: string, key: string): boolean => {
 };
 export const useSetting = (category: string, key: string): boolean => {
   if (!category || !key) return false;
-  const { setting } = Flux.useStateFromStores([Modules.UserSettingsProtoStore], () => {
+  const { setting } = FluxHooks.useStateFromStores([Modules.UserSettingsProtoStore], () => {
     return {
       setting: Boolean(Modules.UserSettingsProtoStore?.settings?.[category]?.[key]?.value),
     };

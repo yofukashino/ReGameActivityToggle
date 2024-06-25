@@ -1,4 +1,4 @@
-import { flux as Flux, React } from "replugged/common";
+import { fluxHooks as FluxHooks, React } from "replugged/common";
 import { ContextMenu } from "replugged/components";
 import { PluginInjectorUtils, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
@@ -13,12 +13,15 @@ export default (): void => {
     Types.DefaultTypes.ContextMenuTypes.Account,
     (_data, { children }: Types.MenuProps) => {
       if (!SettingValues.get("statusPicker", defaultSettings.statusPicker)) return;
-      const { SpotifyAccounts } = Flux.useStateFromStores([Modules.ConnectedAccountsStore], () => {
-        const ConnectedAccounts = Modules.ConnectedAccountsStore.getAccounts();
-        return {
-          SpotifyAccounts: ConnectedAccounts.filter((a) => a.type === "spotify"),
-        };
-      });
+      const { SpotifyAccounts } = FluxHooks.useStateFromStores(
+        [Modules.ConnectedAccountsStore],
+        () => {
+          const ConnectedAccounts = Modules.ConnectedAccountsStore.getAccounts();
+          return {
+            SpotifyAccounts: ConnectedAccounts.filter((a) => a.type === "spotify"),
+          };
+        },
+      );
       const enabled = UserSettingStore.useSetting("status", "showCurrentGame");
       const Icon = (
         <Icons.controller

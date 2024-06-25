@@ -4,18 +4,54 @@ import Types from "../types";
 export const Modules: Types.Modules = {};
 
 Modules.loadModules = async (): Promise<void> => {
-  Modules.SoundUtils ??= await webpack.waitForProps<Types.SoundUtils>(
-    "playSound",
-    "createSound",
-    "createSoundForPack",
-  );
-  Modules.KeybindUtils ??= await webpack.waitForProps<Types.KeybindUtils>("toCombo");
-  Modules.UserSettingsActionUtils ??= await webpack.waitForProps<Types.UserSettingsActionUtils>(
-    "PreloadedUserSettingsActionCreators",
-  );
-  Modules.PanelButton = await webpack.waitForModule<Types.PanelButton>(
-    webpack.filters.bySource("Masks.PANEL_BUTTON"),
-  );
+  Modules.SoundUtilsModule = await webpack
+    .waitForModule<Types.GenericModule>(webpack.filters.bySource("SoundUtils"), {
+      timeout: 10000,
+    })
+    .catch(() => {
+      throw new Error("Failed To Find SoundUtils Module");
+    });
+
+  Modules.SoundUtils ??= {
+    createSound: webpack.getFunctionBySource(Modules.SoundUtilsModule, "return new"),
+    createSoundForPack: webpack.getFunctionBySource(Modules.SoundUtilsModule, /return .\(null/),
+    playSound: webpack.getFunctionBySource(Modules.SoundUtilsModule, ".play()"),
+  };
+
+  Modules.KeybindUtilsModule ??= await webpack
+    .waitForModule<Types.GenericModule>(webpack.filters.bySource("numpad plus"), {
+      timeout: 10000,
+    })
+    .catch(() => {
+      throw new Error("Failed To Find KeybindUtils Module");
+    });
+
+  Modules.KeybindUtils ??= {
+    toCombo: webpack.getFunctionBySource(Modules.KeybindUtilsModule, "numpad plus"),
+    toBrowserEvents: webpack.getFunctionBySource(Modules.KeybindUtilsModule, "{keyCode:0,"),
+  };
+  Modules.UserSettingsActionUtilsModule ??= await webpack.waitForModule<
+    Record<string, Types.SettingsActionCreators>
+  >(webpack.filters.bySource("UserSettingsProtoLastWriteTimes"));
+
+  Modules.UserSettingsActionUtils ??= {
+    PreloadedUserSettingsActionCreators: Object.values(
+      Modules.UserSettingsActionUtilsModule,
+    )?.find?.((n) => n?.updateAsync && n?.ProtoClass?.typeName?.endsWith(".PreloadedUserSettings")),
+    UserSettingsDelay: webpack.getExportsForProps(Modules.UserSettingsActionUtilsModule, [
+      "AUTOMATED",
+      "DAILY",
+    ]),
+  };
+
+  Modules.PanelButton ??= await webpack
+    .waitForModule<Types.PanelButton>(webpack.filters.bySource("Masks.PANEL_BUTTON"), {
+      timeout: 10000,
+    })
+    .catch(() => {
+      throw new Error("Failed To Find PanelButton Module");
+    });
+
   Modules.ConnectedAccountsUtils ??= await webpack.waitForProps<Types.ConnectedAccountsUtils>(
     "setShowActivity",
     "refreshAccessToken",

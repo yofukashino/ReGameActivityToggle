@@ -1,4 +1,4 @@
-import { flux as Flux, React } from "replugged/common";
+import { fluxHooks as FluxHooks, React } from "replugged/common";
 import { ContextMenu } from "replugged/components";
 import Modules from "../lib/requiredModules";
 import Icons from "./Icons";
@@ -6,7 +6,7 @@ import Utils from "../lib/utils";
 const { MenuCheckboxItem, ContextMenu: Menu, MenuSeparator, MenuItem } = ContextMenu;
 
 export default (props) => {
-  const { SpotifyAccounts } = Flux.useStateFromStores([Modules.ConnectedAccountsStore], () => {
+  const { SpotifyAccounts } = FluxHooks.useStateFromStores([Modules.ConnectedAccountsStore], () => {
     const ConnectedAccounts = Modules.ConnectedAccountsStore.getAccounts();
     return {
       SpotifyAccounts: ConnectedAccounts.filter((a) => a.type === "spotify"),
