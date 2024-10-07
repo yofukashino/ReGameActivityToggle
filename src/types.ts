@@ -12,6 +12,13 @@ export namespace Types {
   export interface AudioResolver {
     exports: Types.DefaultTypes.AnyFunction & { keys: () => string[] };
   }
+  export type ProfileItem = React.ComponentType<{
+    label: string;
+    id: string;
+    icon: () => React.ReactElement;
+    onClick: () => void;
+    renderSubmenu?: ({ closePopout }: { closePopout: () => void }) => React.ReactElement;
+  }>;
   export enum UserSettingsDelay {
     AUTOMATED = 30,
     DAILY = 86400,
