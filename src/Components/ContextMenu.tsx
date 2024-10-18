@@ -17,7 +17,7 @@ export default (props) => {
     <Menu {...props} navId="yofukashino">
       <MenuItem
         label="Spotify Accounts"
-        subtext="Here you may toggle which account is allowed to show song playing as activiy on your account"
+        subtext="Here you may toggle which account is allowed to show song playing as activity on your account"
         id="spotify-accounts"
         showIconFirst={true}
         icon={() => <Icons.music height="16" width="16" />}
