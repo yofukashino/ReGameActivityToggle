@@ -1,17 +1,30 @@
-import Modules from "../lib/requiredModules";
-import CleanKeybindsCallback from "./CleanCallback";
-import KeybindListener from "./KeybindListener";
+import { toast as Toasts } from "replugged/common";
+import { SettingValues } from "../index";
+import { defaultSettings } from "../lib/consts";
+import Utils from "../lib/utils";
+import Listeners from "../lib/Keybind";
+import UserSettingStore from "../lib/UserSettingStore";
 
-export const addListeners = async (): Promise<void> => {
-  await Modules.loadModules();
-  Modules.WindowStore?.addChangeListener(CleanKeybindsCallback);
-  window.addEventListener("keydown", KeybindListener);
-  window.addEventListener("keyup", KeybindListener);
+const KeybindListener = new Listeners();
+
+export const addListeners = (): void => {
+  const KeyCode = SettingValues.get("keybind", defaultSettings.keybind);
+  // Not Global Because https://discord.com/channels/919649417005506600/919727473233649674/1355126497580417044
+  if (KeyCode.length)
+    KeybindListener.addListener(KeyCode, () => {
+      const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
+      if (SettingValues.get("showToast", defaultSettings.showToast))
+        Toasts.toast(`${enabled ? "Disabled" : "Enabled"} Game Activity`, Toasts.Kind.SUCCESS);
+      Utils.toggleGameActivity(enabled);
+    });
 };
 export const removeListeners = (): void => {
-  Modules.WindowStore?.removeChangeListener(CleanKeybindsCallback);
-  window.removeEventListener("keydown", KeybindListener);
-  window.removeEventListener("keyup", KeybindListener);
+  KeybindListener.unlistenAll();
 };
 
-export default { addListeners, removeListeners };
+export const renewListeners = (): void => {
+  removeListeners();
+  addListeners();
+};
+
+export default { addListeners, removeListeners, renewListeners };

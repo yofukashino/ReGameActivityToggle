@@ -13,7 +13,7 @@ export const useSetting = (category: string, key: string): boolean => {
   });
   return setting;
 };
-export const setSetting = (category: string, key: string, value: boolean): boolean => {
+export const setSetting = (category: string, key: string, value: boolean): void => {
   if (!category || !key) return;
   const { PreloadedUserSettingsActionCreators, UserSettingsDelay } =
     Modules.UserSettingsActionUtils;

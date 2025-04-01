@@ -3,8 +3,10 @@ import { Category, SwitchItem } from "replugged/components";
 import { PluginLogger, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 import KeybindRecorderItem from "./KeybindRecorderItem";
+import Listeners from "../listeners";
 import Utils from "../lib/utils";
 import Types from "../types";
+
 export const registerSettings = (): void => {
   for (const key in defaultSettings) {
     if (SettingValues.has(key as keyof Types.Settings)) return;
@@ -13,6 +15,11 @@ export const registerSettings = (): void => {
   }
 };
 export const Settings = React.memo((): React.ReactElement => {
+  const [keybind, setKeybind] = Utils.useSettingArray(
+    SettingValues,
+    "keybind",
+    defaultSettings.keybind,
+  );
   return (
     <div>
       <SwitchItem
@@ -27,7 +34,11 @@ export const Settings = React.memo((): React.ReactElement => {
         <KeybindRecorderItem
           title="Toggle by keybind:"
           note="Keybind to toggle showing game activity."
-          {...Utils.useSetting(SettingValues, "keybind", defaultSettings.keybind)}
+          value={keybind}
+          onChange={(...args) => {
+            setKeybind(...args);
+            Listeners.renewListeners();
+          }}
         />
         <SwitchItem
           note="Show toasts on using keybind."
